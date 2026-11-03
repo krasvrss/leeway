@@ -23,7 +23,7 @@ function look(s){
   let v = D[s]; if (v!=null) return v;
   const up = isUpper(s);
   if (up){ v = U[s]; if (v!=null) return v; }
-  if (/^[a-z]/.test(s)){ v = D[s[0].toUpperCase()+s.slice(1)]; if (v!=null) return v[0].toLocaleLowerCase(LOCALE[lang])+v.slice(1); }
+  if (s.length>3 && /^[a-z]/.test(s)){ v = D[s[0].toUpperCase()+s.slice(1)]; if (v!=null) return v[0].toLocaleLowerCase(LOCALE[lang])+v.slice(1); }
   const nums = s.match(NUM);
   if (nums){
     const key = s.replace(NUM, "{n}");

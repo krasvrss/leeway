@@ -52,6 +52,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .mapwrap{position:relative;min-width:0;overflow:hidden;touch-action:none;background:var(--sea)}
 .mapwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 #cv-land{cursor:crosshair}
+.notice.mini{font-size:0;padding:0;width:26px;height:26px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.notice.mini *{display:none}
+.notice.mini::before{content:"i";font:italic 600 13px/1 Georgia,serif;color:var(--muted)}
+.unitbtn{border:1px solid var(--line);background:var(--panel-2);border-radius:8px;padding:5px 9px;font-family:var(--f-mono);font-size:12px;color:var(--ink);min-width:44px}
 .notice{position:absolute;top:10px;left:max(12px,env(safe-area-inset-left,0px));right:auto;z-index:3;
   font-family:var(--f-mono);font-size:11px;color:var(--muted);background:color-mix(in srgb,var(--panel) 88%,transparent);
   border:1px solid var(--line);border-radius:6px;padding:5px 8px;max-width:calc(100% - 84px)}
@@ -68,7 +72,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .app.full .fsexit{display:block}
 #cv-land{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .namerow .fine{grid-column:1/-1}
-.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:168px;z-index:3;display:grid;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
+.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:168px;z-index:3;display:grid;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
 .seactl button{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;font-size:11px;font-weight:600;padding:4px 6px;color:var(--muted)}
 .seactl button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .seactl .fine{font-size:9px;line-height:1.35;font-family:var(--f-mono)}
@@ -192,7 +196,18 @@ ol.lures{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);font-weight:500;margin-right:4px}
 .tackle{border-left:3px solid var(--accent);padding-left:8px}
 .hbtns{display:flex;gap:6px}
-@media (max-width:820px){.hbtns{order:3}}
+@media (max-width:820px){
+  .bar{gap:8px;padding-block:8px}
+  .hbtns{order:1;width:100%}
+  .hbtns .calbtn{flex:1;justify-content:center;padding:7px 4px;border-color:var(--line);white-space:nowrap;min-width:0}
+  .hbtns .calbtn svg{display:none}
+  .bar .seg{order:2;flex:1;justify-content:space-between}
+  .bar .seg button{flex:1;padding:5px 4px}
+  .unitbtn{order:3}
+  .seactl{top:166px;width:auto}
+  .seactl button{padding:4px 8px}
+  .readout{bottom:150px;font-size:10px;padding:4px 7px}
+}
 .spchips{display:flex;flex-wrap:wrap;gap:6px}
 .spchips button{border:1px solid var(--line);background:var(--panel-2);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;display:inline-flex;align-items:baseline;gap:5px}
 .spchips button small{font-weight:400;font-size:10px;color:var(--muted);font-family:var(--f-mono)}
@@ -295,12 +310,7 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <button id="ly-depth" aria-pressed="false" data-layer="depth">Depth</button>
       <button id="ly-chart" aria-pressed="false" data-layer="chart">Chart</button>
     </div>
-    <div class="seg units" role="group" aria-label="Wind units">
-      <button id="u-kn" aria-pressed="true" data-unit="kn">kn</button>
-      <button id="u-ms" aria-pressed="false" data-unit="ms">m/s</button>
-      <button id="u-kmh" aria-pressed="false" data-unit="kmh">km/h</button>
-      <button id="u-bft" aria-pressed="false" data-unit="bft">Bft</button>
-    </div>
+    <button class="unitbtn" id="unitbtn" type="button" aria-label="Wind units: tap to change" title="Wind units: tap to change">kn</button>
     <label class="lang" title="Language"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.2 7h11.6M7 1.2c-2 2-2 9.6 0 11.6M7 1.2c2 2 2 9.6 0 11.6" fill="none" stroke="currentColor" stroke-width="1.1"/></svg><select id="langsel" aria-label="Language"><option value="en">English</option></select></label>
   </header>
   <div class="main">
@@ -311,7 +321,7 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <div class="notice">● spots use live forecasts · wind map simulated · not for navigation</div>
       <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
       <button class="fsexit" id="fsexit" type="button">Show controls</button>
-      <div class="seactl" role="group" aria-label="Seafloor"><button id="isobtn" aria-pressed="true">Depth lines</button><button id="dropbtn" aria-pressed="true">Drop-offs</button><span class="fine">a line every 2 m<br><i class="dropkey"></i>steep slope</span></div>
+      <div class="seactl" role="group" aria-label="Seafloor"><button id="isobtn" aria-pressed="true" title="A depth line every 2 m">Depth lines</button><button id="dropbtn" aria-pressed="true" title="Purple shading marks steep drop-offs"><i class="dropkey"></i>Drop-offs</button></div>
       <button class="readout" id="readout" type="button" aria-label="Copy coordinates"></button>
       <div class="legend" id="legend"></div>
       <div class="toast" id="toast" role="status"></div>
@@ -1078,7 +1088,9 @@ function toast(m){ const el=document.getElementById("toast"); el.textContent=m; 
 /* ---------- controls ---------- */
 function setPressed(sel, attr, val){ document.querySelectorAll(sel).forEach(b=>b.setAttribute("aria-pressed", String(b.dataset[attr]===val))); }
 document.querySelectorAll("[data-layer]").forEach(b=>b.onclick=()=>{ S.layer=b.dataset.layer; store.set("lw.layer",S.layer); setPressed("[data-layer]","layer",S.layer); fieldKey=""; redrawStatic(); renderLegend(); });
-document.querySelectorAll("[data-unit]").forEach(b=>b.onclick=()=>{ S.unit=b.dataset.unit; store.set("lw.unit",S.unit); setPressed("[data-unit]","unit",S.unit); renderAll(); });
+const UNIT_ORDER = ["kn","ms","kmh","bft"];
+const syncUnit = () => { const b=document.getElementById("unitbtn"); b.textContent = UNITS[S.unit].l; };
+document.getElementById("unitbtn").onclick = ()=>{ S.unit = UNIT_ORDER[(UNIT_ORDER.indexOf(S.unit)+1)%UNIT_ORDER.length]; store.set("lw.unit",S.unit); syncUnit(); renderAll(); renderLegend(); toast(UNITS[S.unit].l); };
 const range = document.getElementById("time");
 range.max = HOURS-1;
 range.oninput = ()=>{ setHour(+range.value); };
@@ -2631,7 +2643,7 @@ function renderPanel(){
 
 /* ---------- boot ---------- */
 function renderAll(){ renderWhen(); renderLegend(); renderSpots(); renderSheet(); }
-setPressed("[data-layer]","layer",S.layer); setPressed("[data-unit]","unit",S.unit);
+setPressed("[data-layer]","layer",S.layer); syncUnit();
 renderPlay(); renderDays();
 new ResizeObserver(()=>resize()).observe(wrap);
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{ drawLand(); });
@@ -2655,6 +2667,7 @@ document.getElementById("readout").onclick = async e=>{ const t=e.currentTarget.
 if (window.LW_I18N) window.LW_I18N.onChange(()=>{ heatKey=""; renderAll(); renderDays(); drawLand(); });
 renderAll();
 initLog();
+{ const nt=document.querySelector(".notice"); if (nt){ nt.title="Map info"; setTimeout(()=>nt.classList.add("mini"), 9000); nt.addEventListener("click", e=>{ if (e.target.closest("button")) return; nt.classList.toggle("mini"); }); } }
 requestAnimationFrame(frame);
 })();
 </script>

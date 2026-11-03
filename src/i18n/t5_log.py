@@ -151,3 +151,10 @@ T += [
 ("too cold, activity is low","prehladno, aktivnost je slaba","prehladno, aktivnost je nizka"),
 ("Oslić (hake)","Oslić","Oslič"),
 ]
+T += [
+("Wind units: tap to change","Jedinice vjetra: dodirnite za promjenu","Enote vetra: tapnite za spremembo"),
+("A depth line every 2 m","Izobata svaka 2 m","Izobata vsake 2 m"),
+("Purple shading marks steep drop-offs","Ljubičasto sjenčanje označava strme padine","Vijolično senčenje označuje strme strmine"),
+("Map info","Informacije o karti","Podatki o zemljevidu"),
+("m/s","m/s","m/s"),
+]
