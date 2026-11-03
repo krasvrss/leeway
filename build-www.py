@@ -16,6 +16,7 @@ DATA = {
 }
 
 s = SRC.read_text()
+s = s.replace('__I18N_JS__', (ROOT / 'src/i18n.js').read_text().replace('__I18N__', (ROOT / 'src/data/i18n.json').read_text().strip()))
 
 def R(a, b, n=1):
     global s

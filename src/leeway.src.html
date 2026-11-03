@@ -23,7 +23,8 @@
   --ink:#e2eded; --muted:#8ea2a6; --panel:#101d22; --panel-2:#15262c; --line:#24363c;
   --accent:#ff7a3d; --accent-ink:#1a0d06; --particle:rgba(240,250,250,.62); --label:#a9bcbf; --river:#7fc3e0; --iso:#cfe6f2; --iso-ink:#dff0f8;
   --shadow:0 8px 28px rgba(0,0,0,.45); color-scheme:dark}
-html,body{height:100%}
+html,body{height:100%;margin:0}
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;overflow:hidden}
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -40,6 +41,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .seg button{border:0;background:transparent;padding:5px 10px;border-radius:6px;font-size:13px;color:var(--muted);font-weight:500}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
 .seg.units button{font-family:var(--f-mono);font-size:12px;padding:5px 8px}
+.lang{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--panel-2);border-radius:8px;padding:0 4px 0 8px;color:var(--muted);height:30px}
+.lang select{border:0;background:transparent;color:var(--ink);font:500 13px var(--f-body);padding:4px 2px;cursor:pointer;max-width:120px}
+.lang select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lang select option{background:var(--panel);color:var(--ink)}
+@media (max-width:820px){ .lang{position:absolute;top:10px;right:max(16px,env(safe-area-inset-right,0px))} }
 /* main */
 .main{position:relative;min-height:0;display:grid;grid-template-columns:1fr auto}
 .mapwrap{position:relative;min-width:0;overflow:hidden;touch-action:none;background:var(--sea)}
@@ -52,7 +58,16 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
   background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
 .zoom button{border:0;background:transparent;width:36px;height:36px;font-size:18px;line-height:1}
 .zoom button+button{border-top:1px solid var(--line)}
-.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:96px;z-index:3;display:grid;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
+.zoom button svg{display:block;margin:auto}
+#fsbtn .ico-close{display:none} .app.full #fsbtn .ico-open{display:none} .app.full #fsbtn .ico-close{display:block}
+.app.full{grid-template-rows:1fr}
+.app.full .bar,.app.full .rail{display:none}
+.app.full .readout,.app.full .legend{bottom:calc(58px + env(safe-area-inset-bottom,0px))}
+.fsexit{display:none;position:absolute;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:4;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:8px 16px;font:600 13px var(--f-body);box-shadow:var(--shadow)}
+.app.full .fsexit{display:block}
+#cv-land{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.namerow .fine{grid-column:1/-1}
+.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:168px;z-index:3;display:grid;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
 .seactl button{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;font-size:11px;font-weight:600;padding:4px 6px;color:var(--muted)}
 .seactl button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .seactl .fine{font-size:9px;line-height:1.35;font-family:var(--f-mono)}
@@ -245,6 +260,9 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 .gallery{display:flex;gap:6px;overflow-x:auto}
 .gallery img{height:160px;border-radius:10px;cursor:zoom-in;flex:none;max-width:100%;object-fit:cover}
 .gallery img.big{height:auto;width:100%;cursor:zoom-out}
+.gallery.lureph img{height:110px}
+.lurephotos{border-top:1px dashed var(--line);padding-top:8px}
+.lpt{margin-bottom:6px}
 .kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;font-size:12px}
 .kv div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed var(--line);padding:3px 0}
 .kv span{color:var(--muted)}
@@ -282,6 +300,7 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <button id="u-kmh" aria-pressed="false" data-unit="kmh">km/h</button>
       <button id="u-bft" aria-pressed="false" data-unit="bft">Bft</button>
     </div>
+    <label class="lang" title="Language"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1.2 7h11.6M7 1.2c-2 2-2 9.6 0 11.6M7 1.2c2 2 2 9.6 0 11.6" fill="none" stroke="currentColor" stroke-width="1.1"/></svg><select id="langsel" aria-label="Language"><option value="en">English</option></select></label>
   </header>
   <div class="main">
     <div class="mapwrap" id="mapwrap">
@@ -289,7 +308,8 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <canvas id="cv-parts"></canvas>
       <canvas id="cv-land" aria-label="Wind map of the Adriatic. Tap the water to see the forecast for that point."></canvas>
       <div class="notice">● spots use live forecasts · wind map simulated · not for navigation</div>
-      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button></div>
+      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
+      <button class="fsexit" id="fsexit" type="button">Show controls</button>
       <div class="seactl" role="group" aria-label="Seafloor"><button id="isobtn" aria-pressed="true">Depth lines</button><button id="dropbtn" aria-pressed="true">Drop-offs</button><span class="fine">a line every 2 m<br><i class="dropkey"></i>steep slope</span></div>
       <button class="readout" id="readout" type="button" aria-label="Copy coordinates"></button>
       <div class="legend" id="legend"></div>
@@ -310,6 +330,9 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
   </div>
 </div>
 
+<script>
+__I18N_JS__
+</script>
 <script>
 const LAND = __LAND__;
 const LIVE = __LIVE__;
@@ -742,9 +765,11 @@ function windName(w,lat,lon){
 
 /* ---------- time helpers ---------- */
 const tdate = h => new Date(T0.getTime()+h*3600e3);
-const fDay = d => d.toLocaleDateString(undefined,{weekday:"short"});
-const fDayLong = d => d.toLocaleDateString(undefined,{weekday:"short",day:"numeric",month:"short"});
-const fTime = d => d.toLocaleTimeString(undefined,{hour:"2-digit",minute:"2-digit"});
+const LOC = () => window.LW_I18N ? window.LW_I18N.locale() : undefined;
+const tr = s => window.LW_I18N ? window.LW_I18N.tr(s) : s;
+const fDay = d => d.toLocaleDateString(LOC(),{weekday:"short"});
+const fDayLong = d => d.toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"short"});
+const fTime = d => d.toLocaleTimeString(LOC(),{hour:"2-digit",minute:"2-digit"});
 const fH = d => String(d.getHours()).padStart(2,"0");
 
 /* ---------- map ---------- */
@@ -893,11 +918,21 @@ function drawDepthLabels(g){
   }
   g.textAlign="start";
 }
+const isPin = s => s.live==null && !DEFAULT_SPOTS.some(d=>d.id===s.id);
+function drawPin(g,x,y,name,on){
+  g.save(); g.translate(x,y);
+  g.fillStyle = on ? css("--accent") : "#e0452b"; g.strokeStyle = css("--panel"); g.lineWidth = 1.6;
+  g.beginPath(); g.moveTo(0,0); g.bezierCurveTo(-3,-6,-8,-10,-8,-15); g.arc(0,-15,8,Math.PI,0); g.bezierCurveTo(8,-10,3,-6,0,0); g.closePath(); g.fill(); g.stroke();
+  g.fillStyle = css("--panel"); g.beginPath(); g.arc(0,-15,3,0,7); g.fill();
+  if (S.view.z > 800 && name){ g.font = `600 12px ${css("--f-body")}`; g.lineJoin="round"; g.lineWidth=3; g.strokeStyle=css("--panel"); g.strokeText(name, 11, -11); g.fillStyle=css("--ink"); g.fillText(name, 11, -11); }
+  g.restore();
+}
 function drawMarkers(){
   const g = gL;
   // saved spots
   for (const s of S.spots){
     const x=toX(s.lon), y=toY(s.lat); if (x<-20||y<-20||x>W+20||y>H+20) continue;
+    if (isPin(s)){ drawPin(g,x,y,s.name, S.sel && S.sel.id===s.id); continue; }
     g.fillStyle = s.live!=null ? css("--ink") : css("--panel"); g.strokeStyle = css("--ink"); g.lineWidth=1.5;
     g.beginPath(); g.arc(x,y,4.5,0,7); g.fill(); g.stroke();
     if (S.view.z > 300 && S.view.z < 2500){ g.font = `600 12px ${css("--f-body")}`; g.fillStyle = css("--ink"); g.fillText(s.name, x+8, y+4); }
@@ -961,9 +996,13 @@ function interacting(){
   redrawStatic(true); gP.setTransform(1,0,0,1,0,0); gP.clearRect(0,0,cvP.width,cvP.height);
   clearTimeout(coarseTimer); coarseTimer = setTimeout(()=>{ fieldKey=""; redrawStatic(false); }, 160);
 }
+let lpTimer=0, lpFired=false;
+cvL.addEventListener("contextmenu", e=>{ e.preventDefault(); if (!lpFired) dropPin(e.offsetX,e.offsetY); });
 cvL.addEventListener("pointerdown", e=>{
   cvL.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.offsetX,y:e.offsetY});
-  if (ptrs.size===1){ drag={x:e.offsetX,y:e.offsetY,lon:S.view.lon,lat:S.view.lat}; moved=0; }
+  if (ptrs.size===1){ drag={x:e.offsetX,y:e.offsetY,lon:S.view.lon,lat:S.view.lat}; moved=0; lpFired=false; clearTimeout(lpTimer);
+    const px=e.offsetX, py=e.offsetY; lpTimer=setTimeout(()=>{ if (drag && moved<=6 && ptrs.size===1){ lpFired=true; dropPin(px,py); } }, 550); }
+  else clearTimeout(lpTimer);
   if (ptrs.size===2){ const [a,b]=[...ptrs.values()]; pinch={d:Math.hypot(a.x-b.x,a.y-b.y), z:S.view.z}; moved=99; }
 });
 cvL.addEventListener("pointermove", e=>{
@@ -976,11 +1015,13 @@ cvL.addEventListener("pointermove", e=>{
   }
   if (drag){
     const dx=e.offsetX-drag.x, dy=e.offsetY-drag.y; moved=Math.max(moved,Math.hypot(dx,dy));
+    if (moved>6) clearTimeout(lpTimer);
     if (moved>4){ S.view.lon = drag.lon - dx/(S.view.z*KX); S.view.lat = drag.lat + dy/S.view.z; clampView(); interacting(); }
   }
 });
 function endPtr(e){
-  const wasTap = drag && moved<=4 && ptrs.size===1;
+  clearTimeout(lpTimer);
+  const wasTap = drag && moved<=4 && ptrs.size===1 && !lpFired;
   ptrs.delete(e.pointerId);
   if (ptrs.size<2) pinch=null;
   if (ptrs.size===0){ if (wasTap) tap(e.offsetX,e.offsetY); drag=null; }
@@ -995,6 +1036,26 @@ function zoomAt(x,y,f){
 }
 document.getElementById("zin").onclick = ()=>zoomAt(W/2,H/2,1.4);
 document.getElementById("zout").onclick = ()=>zoomAt(W/2,H/2,1/1.4);
+function dropPin(x,y){
+  if (S.picking) return;
+  const lon=toLon(x), lat=toLat(y);
+  try { navigator.vibrate && navigator.vibrate(15); } catch(e){}
+  select({name:null, lat:+lat.toFixed(5), lon:+lon.toFixed(5)});
+  S.naming = "new"; renderSheet();
+}
+function setFull(on){
+  S.full = !!on; document.querySelector(".app").classList.toggle("full", S.full);
+  document.getElementById("fsbtn").setAttribute("aria-pressed", String(S.full));
+  const de=document.documentElement;
+  try {
+    if (S.full && de.requestFullscreen && !document.fullscreenElement && !/iPhone|iPad/.test(navigator.userAgent)) de.requestFullscreen({navigationUI:"hide"}).catch(()=>{});
+    if (!S.full && document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  } catch(e){}
+}
+document.addEventListener("fullscreenchange", ()=>{ if (!document.fullscreenElement && S.full) setFull(false); });
+document.getElementById("fsbtn").onclick = ()=>setFull(!S.full);
+document.getElementById("fsexit").onclick = ()=>setFull(false);
+document.getElementById("pinbtn").onclick = ()=>{ dropPin(W/2, H/2); toast("Pin dropped at the map centre. Name it and save."); };
 function tap(x,y){
   if (S.picking){
     const lon=toLon(x), lat=toLat(y);
@@ -1004,7 +1065,7 @@ function tap(x,y){
   const rt = routeAt(x,y);
   if (rt){ S.trollRoute=rt.id; S.trollArea=rt.area; S.trollSp = rt.targets[0]; drawLand(); openPanel("troll"); return; }
   // saved spot hit?
-  for (const s of S.spots){ if (Math.hypot(toX(s.lon)-x,toY(s.lat)-y) < 14){ select(Object.assign({},s)); return; } }
+  for (const s of S.spots){ const sx=toX(s.lon), sy=toY(s.lat); if (Math.hypot(sx-x,sy-y) < 14 || (isPin(s) && Math.hypot(sx-x,sy-15-y) < 12)){ select(Object.assign({},s)); return; } }
   const lon=toLon(x), lat=toLat(y);
   if (isLand(lon,lat)){ toast("That point is on land. Tap the water for a marine forecast."); return; }
   select({name:null, lat:+lat.toFixed(3), lon:+lon.toFixed(3)});
@@ -1125,10 +1186,11 @@ function renderSheet(light){
     <div class="sh-head">
       <div class="grow"><h2 id="spot-title"></h2><div class="coords">${coordStr(s)}</div></div>
       <button class="iconbtn" id="zoombtn" aria-label="Zoom map to this spot">⌕ Zoom in</button>
+      ${saved && isPin(s) ? `<button class="iconbtn" id="renamebtn">✎ Rename</button>` : ""}
       <button class="iconbtn ${saved?"on":""}" id="savebtn">${saved?"★ Saved":"☆ Save"}</button>
       <button class="closebtn" id="closebtn" aria-label="Close forecast">×</button>
     </div>
-    ${S.naming?`<form class="namerow" id="nameform"><input id="spotname" maxlength="32" placeholder="Name this spot" aria-label="Spot name"><button class="iconbtn on" type="submit">Save</button></form>`:""}
+    ${S.naming?`<form class="namerow" id="nameform"><input id="spotname" maxlength="32" placeholder="Name this spot" aria-label="Spot name" value="${S.naming==="rename"?esc(s.name||""):""}"><button class="iconbtn on" type="submit">${S.naming==="rename"?"Rename":"Save pin"}</button>${S.naming==="new"?`<span class="fine">Pins stay on the map with their name. Tap ★ again to remove one.</span>`:""}</form>`:""}
     ${showsFish(s) ? fishSection() : `<div class="row2"><button class="iconbtn" id="fishlog">Catch log (${S.catches.filter(c=>c.species!=="none").length}) →</button><button class="iconbtn" id="fishcal">Fish calendar →</button></div>`}
     <div class="secthead"><h3>Conditions</h3><span class="fine" id="sel-when">${fDayLong(tdate(S.hour))} ${fTime(tdate(S.hour))}</span></div>
     ${nowHtml}
@@ -1140,6 +1202,7 @@ function renderSheet(light){
     ${sourceNote(s)}`;
   el.querySelector("#spot-title").textContent = spotName(s);
   el.querySelector("#savebtn").onclick = ()=>toggleSave();
+  const rn = el.querySelector("#renamebtn"); if (rn) rn.onclick = ()=>{ S.naming = S.naming==="rename" ? false : "rename"; renderSheet(); };
   el.querySelector("#zoombtn").onclick = ()=>zoomTo(s.lon,s.lat, s.id==="tar"?11000:9000);
   if (showsFish(s)) wireFish(el); else { el.querySelector("#fishlog").onclick=openLog; el.querySelector("#fishcal").onclick=openCal; }
   el.querySelector("#closebtn").onclick = ()=>{ if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=true; else { S.sel=null; drawLand(); renderSpots(); renderSheet(); } };
@@ -1147,7 +1210,10 @@ function renderSheet(light){
   el.querySelector("#st1").onclick = ()=>{ S.step3=false; renderSheet(); };
   el.querySelectorAll("td.c").forEach(td=>td.onclick=()=>setHour(+td.dataset.h));
   const nf = el.querySelector("#nameform");
-  if (nf){ const inp=nf.querySelector("input"); inp.focus(); nf.onsubmit=ev=>{ ev.preventDefault(); const n=inp.value.trim()||"My spot"; const sp={id:"s"+Date.now().toString(36), name:n, lat:s.lat, lon:s.lon}; S.spots.push(sp); store.set("lw.spots",S.spots.filter(x=>x.live==null)); S.sel=Object.assign({},sp); S.naming=false; toast(`Saved ${n}`); drawLand(); renderSpots(); renderSheet(); }; }
+  if (nf){ const inp=nf.querySelector("input"); inp.focus(); nf.onsubmit=ev=>{ ev.preventDefault(); const n=inp.value.trim()||"My spot";
+    const ex = S.naming==="rename" && S.spots.find(x=>x.id===s.id);
+    if (ex){ ex.name=n; store.set("lw.spots",S.spots.filter(x=>x.live==null)); S.sel=Object.assign({},ex); S.naming=false; toast(`Renamed · ${n}`); drawLand(); renderSpots(); renderSheet(); return; }
+    const sp={id:"s"+Date.now().toString(36), name:n, lat:s.lat, lon:s.lon}; S.spots.push(sp); store.set("lw.spots",S.spots.filter(x=>x.live==null)); S.sel=Object.assign({},sp); S.naming=false; toast(`Saved · ${n}`); drawLand(); renderSpots(); renderSheet(); }; }
   const sel = el.querySelector("td.sel"); if (sel) sel.scrollIntoView({block:"nearest",inline:"center"});
 }
 function lastLiveHour(){ return Math.max(0, LIVE.pts[0].spd.length-1 - liveIdx(0)); }
@@ -1155,13 +1221,13 @@ function sourceNote(s){
   if (s.live==null) return `<p class="fine">Sample forecast generated in the prototype. Live data is wired up for Červar Porat, Poreč and Tarska uvala. Not for navigation.</p>`;
   const P = LIVE.pts[s.live];
   const dw = kmBetween(s.lat,s.lon,P.glat,P.glon), dm = kmBetween(s.lat,s.lon,P.mlat,P.mlon);
-  return `<p class="fine"><b>Live forecast.</b> Wind, gusts and air temperature from Open-Meteo's best-match weather models for the grid cell nearest this spot (${P.glat.toFixed(3)}°N ${P.glon.toFixed(3)}°E, ${dw.toFixed(1)} km away). Waves, sea level and sea temperature from Open-Meteo's marine models, nearest cell ${dm.toFixed(1)} km away. Fetched ${fDayLong(LIVE_FETCHED)} ${fTime(LIVE_FETCHED)}; forecast runs to ${fDayLong(tdate(lastLiveHour()))} ${fTime(tdate(lastLiveHour()))}. The background map stays simulated. Not for navigation.</p>`;
+  return `<p class="fine"><b>Live forecast.</b> Wind, gusts and air temperature from Open-Meteo's best-match weather models for the grid cell nearest this spot (${P.glat.toFixed(3)}°N ${P.glon.toFixed(3)}°E, ${dw.toFixed(1)} km away). Waves, sea level and sea temperature from Open-Meteo's marine models, nearest cell ${dm.toFixed(1)} km away. Fetched <span>${fDayLong(LIVE_FETCHED)} ${fTime(LIVE_FETCHED)}</span>; forecast runs to <span>${fDayLong(tdate(lastLiveHour()))} ${fTime(tdate(lastLiveHour()))}</span>. The background map stays simulated. Not for navigation.</p>`;
 }
 function toggleSave(){
   const s=S.sel, i=S.spots.findIndex(x=>x.id===s.id);
-  if (i>=0 && S.spots[i].live!=null){ toast(`${s.name} is a live spot and stays in the list`); return; }
-  if (i>=0){ S.spots.splice(i,1); store.set("lw.spots",S.spots.filter(x=>x.live==null)); delete s.id; toast(`Removed ${s.name}`); S.naming=false; }
-  else { S.naming = !S.naming; }
+  if (i>=0 && S.spots[i].live!=null){ toast("Live forecast spots stay in the list"); return; }
+  if (i>=0){ S.spots.splice(i,1); store.set("lw.spots",S.spots.filter(x=>x.live==null)); delete s.id; toast(`Removed · ${s.name}`); S.naming=false; }
+  else { S.naming = S.naming ? false : "new"; }
   drawLand(); renderSpots(); renderSheet();
 }
 function forecastTable(s){
@@ -1215,7 +1281,7 @@ function tideBlock(s){
     <path d="${area}" fill="var(--accent)" fill-opacity=".10"/><path d="${path}" fill="none" stroke="var(--ink)" stroke-width="1.6"/>
     ${ext.map(([k,i])=>`<circle cx="${X(i)}" cy="${Y(pts[i])}" r="2.5" fill="var(--ink)"/>`).join("")}
     ${nowLine}</svg>`;
-  const list = ext.slice(0,6).map(([k,i])=>{ const d=new Date(t0+i*900e3); return `<span>${k} ${fDay(d)} ${fTime(d)} · ${pts[i]>=0?"+":""}${pts[i].toFixed(2)} m</span>`; }).join("");
+  const list = ext.slice(0,6).map(([k,i])=>{ const d=new Date(t0+i*900e3); return `<span>${tr(k)} ${fDay(d)} ${fTime(d)} · ${pts[i]>=0?"+":""}${pts[i].toFixed(2)} m</span>`; }).join("");
   return `<div class="tide">${svg}</div><div class="tidelist">${list}</div>`;
 }
 
@@ -1528,7 +1594,7 @@ function personal(sp){
 
 /* ---------- scoring ---------- */
 const NEAR = {bluefish:.15, leerfish:.45, seabass:.6};
-/* ---------- more species: dentex, bonito, bream, hake, squid, cuttlefish ---------- */
+/* ---------- more species: dentex, bonito, gof, garfish, bream, hake, squid, cuttlefish ---------- */
 const L4 = a => ({M:a,S:a,E:a,D:a});
 Object.assign(SPECIES.bluefish, {group:"pred", moonType:"pred", bestG:"E", defStage:"ebb", troll:true,
   wx:{st:[0,6,0,8], lo:5, hi:15, good:5, bad:22, badPts:-14, mid:-4, wmax:1.2, wPts:-8, cc:2}, sst:[[[19,99,10],[17,19,5],[15.5,17,-6]],-20]});
@@ -1554,6 +1620,23 @@ Object.assign(SPECIES, {
     stageNote:{low:"Schools roam the open water; look for birds.", flood:"Bait pushed along the coast by the current draws bonito to the edges.", high:"Schools range wide; cover water.", ebb:"Bonito hit bait on the current lines off the points and the bay mouth."},
     habNote:{deep:"Open water 18–25 m deep: where bonito schools travel along the coast.", mid:"Bonito chase bait over the shelf, often breaking the surface.", dropoff:"Schools follow the edge of the slope at dawn.", seam:"Bonito sometimes push bait up to the plume edge."},
     rules:"Check the current Croatian rules before you keep any."},
+  gof:{name:"Amberjack", local:"gof", color:"#b5651d", group:"pred", moonType:"pred", bestG:"E", defStage:"flood", troll:true,
+    months:[.05,.05,.05,.1,.25,.5,.75,.9,1,.85,.45,.15], depth:[5,12,40,70],
+    hab:{mouth:.15,flat:.1,seam:.4,point:.85,shore:.3,harbour:.35,dropoff:1,mid:.7,deep:.75},
+    stage:{M:[.5,.8,.6,.8],S:[.5,.9,.7,.9],E:[.6,1,.7,1],D:[.7,.9,.7,.9]},
+    light:{M:[1,.6,.9,.2],S:[1,.6,.9,.2],E:[1,.8,1,.3],D:[1,.85,1,.3]},
+    wx:{st:[0,6,0,6], lo:0, hi:14, good:4, bad:18, badPts:-8, mid:0, wmax:1, wPts:-6}, sst:[[[20,99,10],[18,20,4],[16,18,-6]],-15],
+    stageNote:{low:"Gof sit deeper on the rocks and wrecks; jig them slowly.", flood:"Moving water bunches the bait, and gof hunt along the drop-offs.", high:"Gof spread out; look for them under floating objects and round buoys.", ebb:"Current on the points and drop-offs switches gof on."},
+    habNote:{point:"Steep rocky points with current: gof push bait against the rocks here.", dropoff:"Rocky drop-offs and isolated rocks are prime gof ground.", mid:"Gof patrol the shelf after bait schools, often round buoys, mussel farms and anything floating.", deep:"Wrecks and deeper rock hold the bigger gof.", harbour:"Small gof hunt round the outer breakwater and moorings in late summer.", seam:"Young gof follow bait along the plume edge and floating weed."},
+    rules:"Minimum size 45 cm; up to 20% of the gof you keep (by weight) may be 25–45 cm."},
+  garfish:{name:"Garfish", local:"iglica", color:"#2aa198", group:"pred", moonType:"bream", bestG:"S", defStage:"flood",
+    months:[.15,.15,.35,.85,1,.6,.35,.35,.6,.9,.75,.35], depth:[0,1,30,60],
+    hab:{mouth:.5,flat:.5,seam:.85,point:.75,shore:.7,harbour:.6,dropoff:.6,mid:.7,deep:.5},
+    stage:L4([.6,.9,.8,.9]), light:L4([1,.9,1,.15]),
+    wx:{st:[0,4,2,4], lo:3, hi:14, good:5, bad:20, badPts:-8, mid:0, wmax:1, wPts:-5, cc:-2}, sst:[[[15,22,8],[12,15,3],[22,99,2]],-6],
+    stageNote:{low:"Garfish stay out on the open surface away from the shallows.", flood:"Rising water brings garfish schools close to points and harbour walls.", high:"Garfish cruise the surface all along the shore.", ebb:"Garfish line up on the current seams and the plume edge to pick off small fry."},
+    habNote:{seam:"The plume edge collects fry and plankton: a top garfish line.", point:"Garfish schools swing past points on the moving tide.", shore:"Garfish cruise the surface close to rocky shore, especially in spring and autumn.", harbour:"Garfish hunt fry round harbour walls and breakwater tips.", mid:"Schools roam the surface in open water; look for small fish skipping.", mouth:"Garfish feed on fry pushed out of the Mirna on the ebb."},
+    rules:"No minimum size in Croatia. A favourite live bait for leerfish."},
   orada:{name:"Orada", local:"gilthead bream", color:"#8e6bbf", group:"bream", moonType:"bream", bestG:"S", defStage:"flood",
     months:[.3,.25,.3,.45,.55,.6,.6,.7,.9,1,.95,.55], depth:[.5,1.5,12,20],
     hab:{mouth:.9,flat:.85,seam:.5,point:.55,shore:.7,harbour:.9,dropoff:.5,mid:.45,deep:.2},
@@ -1614,8 +1697,8 @@ Object.assign(SPECIES, {
 });
 const GROUPS = [["pred","Predators"],["bream","Bream & bottom"],["ceph","Squid & cuttlefish"]];
 SP_KEYS.length = 0; GROUPS.forEach(([g])=>Object.keys(SPECIES).forEach(k=>{ if (SPECIES[k].group===g) SP_KEYS.push(k); }));
-Object.assign(NEAR, {dentex:.05, bonito:0, orada:.35, fratar:.45, spar:.5, ribon:0, hake:0, squid:.25, cuttlefish:.45});
-function habNoteOf(sp, h){ const s=SPECIES[sp], n=s.habNote[h]; if (n) return n; const v=s.hab[h]; return v>=.7 ? `Good ${s.name.toLowerCase()} ground.` : v>=.4 ? `Some ${s.name.toLowerCase()} here.` : `Few ${s.name.toLowerCase()} here.`; }
+Object.assign(NEAR, {gof:.1, garfish:.3, dentex:.05, bonito:0, orada:.35, fratar:.45, spar:.5, ribon:0, hake:0, squid:.25, cuttlefish:.45});
+function habNoteOf(sp, h){ const s=SPECIES[sp], n=s.habNote[h]; if (n) return n; const v=s.hab[h]; return v>=.7 ? "Good ground for this species." : v>=.4 ? "Some fish here." : "Few fish here."; }
 
 /* ---------- bait and lure picks for the new species ---------- */
 function extraPicks(sp, ctx){
@@ -1631,6 +1714,16 @@ function extraPicks(sp, ctx){
       P("Trolled feathers / squid skirts","5–8 cm, 30–50 m behind the boat at 4–6 kn",["white","pinkwhite"],"Steer along the edge of feeding schools, not through them."),
       P("Shallow-diving minnow","7–11 cm",["sardine","chrome"],"Troll at 4–6 kn or cast and rip it back fast.")],
     rig:"0.40–0.50 mm fluorocarbon leader; bonito have small sharp teeth and fight hard."};
+  if (sp==="gof") return {picks:[
+      P("Live bait (garfish, mackerel, squid)","2/0–5/0 circle hook, bridled",[],"Slow-troll or drift it round rocky drop-offs, isolated rocks and buoys at 10–30 m. When the gof takes it, let it run for a few seconds, then wind tight and pull it away from the rocks."),
+      P("Vertical / slow-pitch jig","60–150 g", ctx.light==="dawn"||ctx.light==="dusk" ? ["pinkwhite","chrome"] : ["sardine","glow"],"Drop to the bottom, then rip it up fast for 10–15 m with long sweeps and drop it again. Gof often hit as the jig turns at the top."),
+      P("Popper or big stickbait","14–18 cm, 40–70 g",["white","sardine"],"At first light over the drop-off or round floating objects: loud pops with pauses, or a fast walk. Small gof shoal under buoys and floating weed in late summer.")],
+    rig:"Gof dive straight for the rocks: 60–80 lb fluorocarbon leader, 30–50 lb braid and a firm drag. Minimum size 45 cm."};
+  if (sp==="garfish") return {picks:[
+      P("Float with a fish strip","Thin strip of sardine or squid on a long-shank #8–#10 hook",[],"Set the float shallow (0.5–1 m) and let it drift with the current along points, harbour walls and the plume edge. Strike slowly: garfish hold the bait in their beak first."),
+      P("Bombarda (casting float) with a small streamer","3–5 cm white or silver fly, 2–3 m leader",["white","chrome"],"Cast far, then wind slowly and steadily just under the surface. The best way to reach schools out of range of a normal float."),
+      P("Small spoon or spinner","5–10 g, slim",["chrome","sardine"],"Fast retrieve just under the surface. Garfish follow it a long way; many hits miss the hook because of their hard beak, so use a small single hook or a thread loop.")],
+    rig:"Light rod, 0.16–0.20 mm line, small sharp hooks. Their beak is hard and bony, so strike gently and keep the line tight."};
   if (sp==="orada") return {picks:[
       P("Mussels (dagnje)","2–3 opened mussels, or the meat tied on with bait elastic; hook 1–1/0",[],"Ledger rig on the bottom with a 1–1.5 m leader. Crush a few mussels as groundbait. Strike on the second, firmer pull."),
       P("Crab or hermit crab","Small whole crab; hook 1/0–2/0",[],"Best for bigger orada. Fish it hard on the bottom close to rocks and walls. Orada crush the shell, so give them time."),
@@ -1699,6 +1792,12 @@ const TROLL = {
     {lure:"Trolling spoon", size:"5–8 cm", col:["chrome","gold"]}],
     setup:"30–50 m behind the boat, in or just outside the propeller wash. Steer for birds and bait breaking the surface, and cut across the edge of the school rather than through it.",
     rig:"0.40–0.50 mm fluorocarbon leader, 3–5 m long."},
+  gof:{speed:"1–2 kn with live bait, 4–6 kn with lures", items:[
+    {lure:"Live garfish, mackerel or squid", size:"bridled on a 4/0–6/0 circle hook, 5–15 m down", col:[]},
+    {lure:"Deep-diving minnow", size:"15–20 cm, dives 8–15 m", col:["sardine","pinkwhite"]},
+    {lure:"Feathers / squid skirt", size:"10–15 cm", col:["white","pinkwhite"]}],
+    setup:"Work the drop-off and isolated rocks at 15–30 m at first light, and pass close to buoys, mussel farms and floating objects. When a gof hooks up, steer away from the rocks straight away.",
+    rig:"60–80 lb fluorocarbon leader and a strong drag."},
   hake:{speed:"not trolled", items:[], setup:"Hake aren't caught trolling. They live on the bottom, mostly deeper than 40 m, and only a few come into the 20–25 m channel on winter nights. Anchor or drift there after dark with sardine strips on a 2-hook bottom rig.", rig:"0.35–0.40 mm leader."}
 };
 // Troll lines snap to a depth band; Červar lines are traced along the depth contour.
@@ -1706,21 +1805,21 @@ const ROUTES = [
   {id:"n-in", area:"north", name:"Inshore line: Mirna plume to Kostanjija", band:[4,10], targets:["leerfish","seabass","bluefish"],
     guide:[[13.590,45.3125],[13.584,45.3122],[13.578,45.3122],[13.571,45.3115],[13.565,45.3125],[13.557,45.3125],[13.551,45.316],[13.548,45.3205],[13.5465,45.3255],[13.5415,45.329],[13.5385,45.3345],[13.534,45.342],[13.534,45.350]],
     note:"Along the edge of the river plume, past Rt Sv. Petar and the Novigrad breakwater, then up the rocky coast to Rt Štrunac. Stay 100–200 m off the rocks."},
-  {id:"n-bay", area:"north", name:"Tarska bay mouth: Rt Zub to Rt Kras", band:[6,14], targets:["bluefish","leerfish","dentex"],
+  {id:"n-bay", area:"north", name:"Tarska bay mouth: Rt Zub to Rt Kras", band:[6,14], targets:["bluefish","leerfish","dentex","gof"],
     guide:[[13.560,45.299],[13.568,45.2995],[13.576,45.301],[13.583,45.303],[13.588,45.3055]],
     note:"Across the south side of the bay mouth where the slope drops off. Good on the ebb when river water flows out."},
-  {id:"n-out", area:"north", name:"Outer line off Novigrad", band:[15,24], targets:["bonito","dentex","bluefish"],
+  {id:"n-out", area:"north", name:"Outer line off Novigrad", band:[15,24], targets:["bonito","dentex","gof","bluefish"],
     guide:[[13.552,45.297],[13.546,45.305],[13.538,45.313],[13.533,45.322],[13.529,45.331],[13.525,45.340],[13.523,45.350]],
     note:"The 15–22 m line about 1.5 km off the coast, where bonito schools travel along the shore in autumn."},
   {id:"s-in", area:"south", name:"Červar inshore: Lanterna to Šilok", contour:7, lonMax:13.589, targets:["leerfish","seabass","bluefish"],
     note:"Past Valetica, Rt Razba, the mouth of Luka Červar, Mali Školj, the Mrčana coves and Rt Busuja, about 100–250 m off the rocks."},
-  {id:"s-edge", area:"south", name:"Červar plateau edge", contour:14, targets:["dentex","bonito","bluefish"],
+  {id:"s-edge", area:"south", name:"Červar plateau edge", contour:14, targets:["dentex","bonito","gof","bluefish"],
     note:"Where the 12–16 m plateau starts to drop off, about 1 km out. Dentex and bonito follow this edge at first light."},
   {id:"s-out", area:"south", name:"Offshore Červar", contour:20, targets:["bonito","hake"],
     note:"The open 20–25 m water about 2.5 km out, for bonito schools in autumn."},
   {id:"p-in", area:"porec", name:"Poreč inshore: Rt Materada to Funtana", contour:7, lat:[45.1815,45.2535], targets:["leerfish","seabass","bluefish"],
     note:"Past Rt Sv. Martin, outside Sv. Nikola island, along Brulo and Plava Laguna and round the Zelena Laguna islets to Funtana. Keep clear of the swimming zones off the beaches."},
-  {id:"p-edge", area:"porec", name:"Poreč plateau edge", contour:14, lat:[45.1815,45.2535], targets:["dentex","bonito","bluefish"],
+  {id:"p-edge", area:"porec", name:"Poreč plateau edge", contour:14, lat:[45.1815,45.2535], targets:["dentex","bonito","gof","bluefish"],
     note:"The 12–16 m edge about 1–1.5 km off the coast, outside the islets. Dentex and bonito follow it at first light."},
   {id:"p-out", area:"porec", name:"Offshore Poreč", contour:20, lat:[45.1815,45.2535], targets:["bonito","hake"],
     note:"Open 20–26 m water 2–3 km out, where bonito schools pass in autumn."}
@@ -1911,7 +2010,7 @@ function dayOutlook(day, sp){
   let covered=0;
   for (const [nm,t] of wins){ const w=wxAt(t); if (!w) continue; covered++; const r=windowPts(sp,w,t); add(nm, r.p, r.note); }
   if (covered<2) add("Weather", 6*(2-covered), "Typical value until the forecast reaches this day");
-  if (P.n>=5){ const mp=P.month(mIdx), mb=P.moon(moonBucket(moon.elong)); if (Math.round(mp+mb)) add("Your log", mp+mb, `From your ${P.n} ${SPECIES[sp].name.toLowerCase()}`); }
+  if (P.n>=5){ const mp=P.month(mIdx), mb=P.moon(moonBucket(moon.elong)); if (Math.round(mp+mb)) add("Your log", mp+mb, `From your ${P.n} catches`); }
   const sc = clamp(Math.round(40 + f.reduce((a,x)=>a+x.pts,0)),0,100);
   return {day, sc, lvl:level(sc), factors:f, sun, moon, forecast: covered>=2?"full":covered?"part":"none", sst};
 }
@@ -1931,7 +2030,7 @@ const COLORS = {
   black:{name:"Black / dark purple", sw:["#1d1a24","#3a2c4a","#1d1a24"]},
   glow:{name:"Glow (UV / luminous)", sw:["#c9f2d6","#9de8b8","#c9f2d6"]}
 };
-const LURE_TYPES = ["Surface stickbait","Popper","Sinking stickbait","Floating minnow","Sinking minnow","Deep-diving minnow","Sinking pencil","Metal jig","Slow-pitch jig","Inchiku","Soft shad / swimbait","Slug / jerkshad","Feathers / skirt","Trolling spoon","Squid jig (egi)","Live fish","Live squid / cuttlefish","Mussels","Worms","Shrimp","Crab","Squid strips","Sardine","Bread / paste","Other"];
+const LURE_TYPES = ["Surface stickbait","Popper","Sinking stickbait","Floating minnow","Sinking minnow","Deep-diving minnow","Sinking pencil","Metal jig","Slow-pitch jig","Inchiku","Soft shad / swimbait","Slug / jerkshad","Feathers / skirt","Trolling spoon","Squid jig (egi)","Bombarda + fly","Live fish","Live squid / cuttlefish","Mussels","Worms","Shrimp","Crab","Squid strips","Sardine","Bread / paste","Other"];
 const RETRIEVES = ["Fast walk-the-dog","Pop-pop-pause","Fast steady","Medium steady","Slow steady","Twitch & pause","Count-down & rip","Lift & flutter (jig)","Egi: lift & glide","Drag on the bottom","Trolling","Slow trolling live bait","Drifting (boat)","Bottom ledger","Float","Drift in current","Static bait","Other"];
 function swatch(k){ const c=COLORS[k]; return c ? `<span class="sw" title="${esc(c.name)}">${c.sw.map(x=>`<i style="background:${x}"></i>`).join("")}</span>` : ""; }
 function baseColor(ctx){
@@ -1987,7 +2086,7 @@ function seasonLine(d){
   const m=d.getMonth(), by={peak:[],good:[],fair:[]};
   SP_KEYS.forEach(k=>{ const v=SPECIES[k].months[m]; if (v>=.85) by.peak.push(k); else if (v>=.6) by.good.push(k); else if (v>=.35) by.fair.push(k); });
   const f = ks => ks.map(k=>`<span style="color:${spColor(k)};font-weight:600">${SPECIES[k].name}</span>`).join(", ");
-  return `${MONTHS[m]} (${seasonOf(m).toLowerCase()}): ` + [by.peak.length?`<b>peak</b> ${f(by.peak)}`:"", by.good.length?`<b>good</b> ${f(by.good)}`:"", by.fair.length?`<b>fair</b> ${f(by.fair)}`:""].filter(Boolean).join(" · ");
+  return `${tr(MONTHS[m])} (${tr(seasonOf(m)).toLowerCase()}): ` + [by.peak.length?`<b>peak</b> ${f(by.peak)}`:"", by.good.length?`<b>good</b> ${f(by.good)}`:"", by.fair.length?`<b>fair</b> ${f(by.fair)}`:""].filter(Boolean).join(" · ");
 }
 function sunWindows(){ const out=[], base=new Date(T0); base.setHours(0,0,0,0); for (let d=0; d<7; d++) out.push(sunTimes(new Date(base.getTime()+d*864e5),45.31,13.59)); return out; }
 function stageStrip(){
@@ -2022,7 +2121,7 @@ function fishSection(){
     <div class="seg stages" role="group" aria-label="Tide stage">${STAGE_KEYS.map(k=>`<button data-stage="${k}" aria-pressed="${stage===k}" style="--st:${STAGES[k].color}">${STAGES[k].short}${auto===k?" •":""}</button>`).join("")}</div>
     ${stageStrip()}
     <div class="seg stages lights" role="group" aria-label="Time of day">${LIGHTS.map(k=>`<button data-light="${k}" aria-pressed="${light===k}" style="--st:#5b6b8c">${LIGHT_LABEL[k]}${autoL===k?" •":""}</button>`).join("")}</div>
-    <p class="fine"><b class="k">${STAGES[stage].short} · ${LIGHT_LABEL[light]}</b> ${esc(sd.stageNote[stage])} ${P.n?`<span class="pers">Adjusted with your ${P.n} logged ${sd.name.toLowerCase()}.</span>`:""}</p>
+    <p class="fine"><b class="k">${STAGES[stage].short} · ${LIGHT_LABEL[light]}</b> ${esc(sd.stageNote[stage])} ${P.n?`<span class="pers">Adjusted with your ${P.n} logged catches.</span>`:""}</p>
     <div class="seg stages areas4" role="group" aria-label="Area">${AREAS.map(([k,l])=>`<button data-farea="${k}" aria-pressed="${area===k}" style="--st:#1f5f99">${l}</button>`).join("")}</div>
     <ol class="zones">${shown.map(r=>`<li data-zone="${r.z.id}"><div class="zh"><b>${esc(r.z.name)}</b><span class="dots">${DOT_TXT[dots(r.sc)]}</span></div><div class="fine">${r.z.dmin===r.z.dmax?r.z.dmin:r.z.dmin+"–"+r.z.dmax} m · ${esc(habNoteOf(sp, r.z.hab))}${P.counts.zo[r.z.id]?` · <b>${P.counts.zo[r.z.id]} of your catches</b>`:""}</div></li>`).join("")}</ol>
     ${rank.length>6?`<button class="linkbtn" id="allzones">${S.allZones?"Show top 6":`Show all ${rank.length} zones`}</button>`:""}
@@ -2091,8 +2190,8 @@ function renderCal(){
       ${W_.map(([nm,c,span],wi)=>{ const L=lurePicks(sp, ctxOf(c,wi)); return `
         <div class="secthead"><h3>${nm} · ${span}</h3><span class="fine">${c.have?`${c.stage?STAGES[c.stage].short+" · ":""}${Math.round(c.spd)} kn · ${c.cc}% cloud · ${c.clar} water`:`${c.clar} water (no live forecast yet)`}</span></div>
         <ol class="lures">${L.picks.map(lureCard).join("")}</ol>`; }).join("")}
-      <div class="fine tackle"><b class="k">Rig</b> ${esc(lurePicks(sp, ctxOf(W_[0][1],0)).rig)}${lstats.length?` <b class="k">Your log</b> Most ${SPECIES[sp].name.toLowerCase()} so far on: ${lstats.map(([k,n])=>`${esc(k)} (${n})`).join(", ")}.`:""}</div>
-      <p class="fine">The score adds up season, moon, solunar periods at dawn and dusk, sea temperature and, where the live forecast reaches, tide, wind and waves at the best times of day for ${SPECIES[sp].name.toLowerCase()}${P.n>=5?`, plus what your own ${P.n} catches show`:""}. It's an outlook to plan around, not a count of fish.</p>
+      <div class="fine tackle"><b class="k">Rig</b> ${esc(lurePicks(sp, ctxOf(W_[0][1],0)).rig)}${lstats.length?` <b class="k">Your log</b> Most of your catches so far on: ${lstats.map(([k,n])=>`${esc(k)} (${n})`).join(", ")}.`:""}</div>
+      <p class="fine">The score adds up season, moon, solunar periods at dawn and dusk, sea temperature and, where the live forecast reaches, tide, wind and waves at the best times of day for this species${P.n>=5?`, plus what your own ${P.n} catches show`:""}. It's an outlook to plan around, not a count of fish.</p>
     </section>`;
   el.querySelectorAll("#calsp [data-sp]").forEach(b=>b.onclick=()=>setSpecies(b.dataset.sp));
   el.querySelectorAll(".cday").forEach(b=>b.onclick=()=>{ S.calSel=+b.dataset.k; renderCal(); const h=Math.round((days[S.calSel].sun.rise - T0)/3600e3); if (h>=0 && h<HOURS){ S.hour=h; range.value=h; fieldKey=""; redrawStatic(); renderWhen(); renderSpots(); } });
@@ -2112,6 +2211,7 @@ function normalizeRec(r){
   if (o.lure && !o.lureName) o.lureName = o.lure;
   if (o.count==null) o.count = o.species==="none" ? 0 : 1;
   if (!o.photos) o.photos = [];
+  if (!o.lurePhotos) o.lurePhotos = [];
   if (!o.zone && o.lat!=null){ const z=zoneOf(o.lon,o.lat); o.zone = z ? z.id : null; }
   if (o.at && !o.cond.month){ const d=new Date(o.at); o.cond.month=d.getMonth()+1; o.cond.season=seasonOf(d.getMonth()); o.cond.light=o.cond.light||lightAt(d); const m=moonState(d); o.cond.moon=o.cond.moon||moonBucket(m.elong); o.cond.illum=o.cond.illum!=null?o.cond.illum:Math.round(m.illum*100); o.cond.moonName=o.cond.moonName||moonName(m); }
   return o;
@@ -2128,7 +2228,7 @@ async function saveRec(rec){
   store.set("lw.catches", all); loadLocalCatches(); return true;
 }
 async function deleteRec(r){
-  for (const p of (r.photos||[])) await Photos.del(p);
+  for (const p of (r.photos||[]).concat(r.lurePhotos||[])) await Photos.del(p);
   if (catchCol){ try { await catchCol.doc(r.id).delete(); } catch(e){ toast("Couldn't remove it. Try again."); } return; }
   store.set("lw.catches", store.get("lw.catches",[]).filter(x=>x.id!==r.id)); loadLocalCatches();
 }
@@ -2214,7 +2314,7 @@ function bars(title, entries, total, color){
 }
 function monthCols(entries, color){
   const max = Math.max(1, ...entries.map(e=>e[1]));
-  return `<div class="bars mcols"><div class="bt">Month / season</div><div class="mc">${entries.map(([k,n],i)=>`<div title="${k}: ${n}"><span class="mb"><i style="height:${Math.round(n/max*100)}%;background:${color}"></i></span><span class="ml">${k[0]}</span><span class="mn">${n||""}</span></div>`).join("")}</div><div class="ms fine"><span>Winter</span><span>Spring</span><span>Summer</span><span>Autumn</span><span>W</span></div></div>`;
+  return `<div class="bars mcols"><div class="bt">Month / season</div><div class="mc">${entries.map(([k,n],i)=>`<div title="${k}: ${n}"><span class="mb"><i style="height:${Math.round(n/max*100)}%;background:${color}"></i></span><span class="ml">${esc(tr(k)[0])}</span><span class="mn">${n||""}</span></div>`).join("")}</div><div class="ms fine"><span>Winter</span><span>Spring</span><span>Summer</span><span>Autumn</span><span>W</span></div></div>`;
 }
 function insights(recs, color){
   const fish = recs.filter(r=>r.species!=="none"), n = fish.reduce((a,r)=>a+(r.count||1),0);
@@ -2249,10 +2349,10 @@ function recRow(r){
   return `<li class="rec" data-id="${esc(r.id)}">${ph}<div class="rt"><b>${esc(title)}</b><span class="fine">${esc(meta)}</span>${r.zone?`<span class="fine">${esc(zoneById(r.zone).name)}</span>`:""}</div></li>`;
 }
 function csvOf(recs){
-  const cols=["date","time","species","count","length_cm","weight_kg","kept","lat","lon","zone","depth_m","lure_type","lure_name","colour","retrieve","tide","sea_level_m","light","moon","moon_lit_pct","month","season","wind_kn","wind_dir","gust_kn","cloud_pct","air_c","sea_c","waves_m","water","data_source","photos","note"];
+  const cols=["date","time","species","count","length_cm","weight_kg","kept","lat","lon","zone","depth_m","lure_type","lure_name","colour","retrieve","tide","sea_level_m","light","moon","moon_lit_pct","month","season","wind_kn","wind_dir","gust_kn","cloud_pct","air_c","sea_c","waves_m","water","data_source","photos","lure_photos","note"];
   const q = v => { const s = v==null ? "" : String(v); return /[",\n;]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; };
   return [cols.join(",")].concat(recs.map(r=>{ const d=new Date(r.at), c=r.cond||{};
-    return [localIso(d).slice(0,10), localIso(d).slice(11,16), r.species==="other"?(r.other||"other"):r.species, r.count, r.lengthCm, r.weightKg, r.kept==null?"":(r.kept?"yes":"no"), r.lat, r.lon, r.zone?zoneById(r.zone).name:"", r.depth, r.lureType, r.lureName, r.color&&COLORS[r.color]?COLORS[r.color].name:r.color, r.retrieve, c.stage, c.sl, c.light, c.moonName, c.illum, c.month, c.season, c.spd, c.dir, c.gust, c.cc, c.tmp, c.sst, c.hs, c.clarity, c.src, (r.photos||[]).length, r.note].map(q).join(","); })).join("\n");
+    return [localIso(d).slice(0,10), localIso(d).slice(11,16), r.species==="other"?(r.other||"other"):r.species, r.count, r.lengthCm, r.weightKg, r.kept==null?"":(r.kept?"yes":"no"), r.lat, r.lon, r.zone?zoneById(r.zone).name:"", r.depth, r.lureType, r.lureName, r.color&&COLORS[r.color]?COLORS[r.color].name:r.color, r.retrieve, c.stage, c.sl, c.light, c.moonName, c.illum, c.month, c.season, c.spd, c.dir, c.gust, c.cc, c.tmp, c.sst, c.hs, c.clarity, c.src, (r.photos||[]).length, (r.lurePhotos||[]).length, r.note].map(q).join(","); })).join("\n");
 }
 function openLog(){ S.logFilter = S.logFilter || "all"; openPanel("log"); }
 function renderLog(){
@@ -2264,7 +2364,7 @@ function renderLog(){
     ${speciesChips("logsp", f, true)}
     <section class="ins">${insights(recs, f==="all"?"var(--accent)":spColor(f))}</section>
     <div class="secthead"><h3>${recs.length} ${recs.length===1?"entry":"entries"}</h3><span class="fine">tap one to see it in full</span></div>
-    <ul class="recs">${recs.map(recRow).join("") || `<li class="fine">Nothing logged${f!=="all"?" for "+SPECIES[f].name.toLowerCase():""} yet.</li>`}</ul>
+    <ul class="recs">${recs.map(recRow).join("") || `<li class="fine">Nothing logged${f!=="all"?" for this species":""} yet.</li>`}</ul>
     ${recs.length?`<div class="row2"><button class="iconbtn" id="copycsv">Copy log as CSV</button><button class="iconbtn" id="dlcsv" hidden>Download CSV</button></div>
     <p class="fine">Paste the CSV into a chat with Claude to dig into your patterns, or open it in a spreadsheet.</p>`:""}
     <p class="fine"><b class="k">Note</b> Croatian rules require licence holders to record their daily catch of seabass, leerfish and bluefish from 1 January 2027. This log keeps that record for you.</p>`;
@@ -2283,8 +2383,9 @@ function renderLog(){
 function openEntry(rec, blank){
   const base = S.sel && inFB(S.sel.lon,S.sel.lat) ? S.sel : TAR;
   const now = new Date();
-  S.draft = rec ? JSON.parse(JSON.stringify(rec)) : {species: blank?"none":S.species, count: blank?0:1, at: now.toISOString(), lat: base.lat, lon: base.lon, photos:[], cond:{}, kept:false, lureType:"", color:"", retrieve:""};
-  S.draftFiles = [];
+  S.draft = rec ? JSON.parse(JSON.stringify(rec)) : {species: blank?"none":S.species, count: blank?0:1, at: now.toISOString(), lat: base.lat, lon: base.lon, photos:[], lurePhotos:[], cond:{}, kept:false, lureType:"", color:"", retrieve:""};
+  S.draftFiles = []; S.draftLure = [];
+  if (!S.draft.lurePhotos) S.draft.lurePhotos = [];
   openPanel("entry");
   if (!rec) refreshDraftCond();
 }
@@ -2328,17 +2429,21 @@ function renderEntry(){
       <label class="wide">When<input id="e-when" type="datetime-local" value="${localIso(new Date(d.at))}"></label>
       <div class="wide whererow"><span class="fine">Where: <b id="e-where">${d.lat!=null?coordStr(d)+(d.zone?" · "+esc(zoneById(d.zone).name):""):"not set"}</b></span><button type="button" class="iconbtn" id="e-pick">Pick on map</button></div>
       ${blank?"":`
-      <label>Lure type<select id="e-lt"><option value="">–</option>${LURE_TYPES.map(t=>`<option ${d.lureType===t?"selected":""}>${t}</option>`).join("")}</select></label>
+      <label>Lure type<select id="e-lt"><option value="">–</option>${LURE_TYPES.map(t=>`<option value="${esc(t)}" ${d.lureType===t?"selected":""}>${esc(t)}</option>`).join("")}</select></label>
       <label>Colour<select id="e-col"><option value="">–</option>${Object.entries(COLORS).map(([k,c])=>`<option value="${k}" ${d.color===k?"selected":""}>${c.name}</option>`).join("")}</select></label>
-      <label>Retrieve<select id="e-ret"><option value="">–</option>${RETRIEVES.map(t=>`<option ${d.retrieve===t?"selected":""}>${t}</option>`).join("")}</select></label>
-      <label>Lure name / bait<input id="e-ln" maxlength="60" value="${esc(d.lureName||"")}" placeholder="e.g. 14 cm Patchinko"></label>`}
+      <label>Retrieve<select id="e-ret"><option value="">–</option>${RETRIEVES.map(t=>`<option value="${esc(t)}" ${d.retrieve===t?"selected":""}>${esc(t)}</option>`).join("")}</select></label>
+      <label>Lure name / bait<input id="e-ln" maxlength="60" value="${esc(d.lureName||"")}" placeholder="e.g. 14 cm Patchinko"></label>
+      <div class="wide photos lurephotos"><div class="fine lpt"><b class="k">Lure photo</b> so you remember exactly what it was</div>
+        <div class="phs" id="lphs">${(d.lurePhotos||[]).map((p,i)=>`<span class="phw"><img alt="Lure photo" data-ph='${esc(JSON.stringify(p))}'><button type="button" class="phx" data-ldel="${i}" aria-label="Remove lure photo">×</button></span>`).join("")}${S.draftLure.map((f,i)=>`<span class="phw"><img alt="Lure photo" src="${f.url}"><button type="button" class="phx" data-ldelnew="${i}" aria-label="Remove lure photo">×</button></span>`).join("")}</div>
+        <div class="row2"><label class="addph" for="e-lcam">Photograph the lure</label><label class="addph" for="e-lphoto">＋ Lure from gallery</label></div>
+        <input id="e-lcam" type="file" accept="image/*" capture="environment" hidden><input id="e-lphoto" type="file" accept="image/*" multiple hidden></div>`}
       <div class="wide secthead"><h3>Conditions</h3><button type="button" class="linkbtn" id="e-recond">Look up again</button></div>
       <div class="wide" id="condbox"></div>
       <label class="wide">Note<input id="e-note" maxlength="300" value="${esc(d.note||"")}" placeholder="Birds working, bait size, water colour, what didn't work…"></label>
       <div class="wide row2"><button type="submit" class="iconbtn on" id="e-save">${d.id?"Save changes":"Save to log"}</button></div>
     </form>`;
   const $ = s => el.querySelector(s);
-  $("#entback").onclick = ()=>{ S.draft=null; S.draftFiles.forEach(f=>URL.revokeObjectURL(f.url)); S.draftFiles=[]; S.picking=false; openPanel(S.detailId&&d.id?"detail":"log"); };
+  $("#entback").onclick = ()=>{ S.draft=null; S.draftFiles.concat(S.draftLure||[]).forEach(f=>URL.revokeObjectURL(f.url)); S.draftFiles=[]; S.draftLure=[]; S.picking=false; openPanel(S.detailId&&d.id?"detail":"log"); };
   el.querySelectorAll("[data-esp]").forEach(b=>b.onclick=()=>{ collectEntry(); const was=d.species; d.species=b.dataset.esp; if (d.species==="none") d.count=0; else if (was==="none") d.count=1; renderEntry(); });
   const onPhotos = ph => async ()=>{
     collectEntry(); const files=[...ph.files]; let first=!d.photos.length && !S.draftFiles.length, usedExif=false;
@@ -2353,6 +2458,12 @@ function renderEntry(){
     renderEntry(); if (usedExif) toast("Time and place taken from the photo"); refreshDraftCond();
   };
   for (const id of ["#e-photo","#e-cam"]){ const ph=$(id); if (ph) ph.onchange = onPhotos(ph); }
+  const onLure = ph => async ()=>{ collectEntry();
+    for (const f of [...ph.files]){ try { const blob = await shrink(f, 1200); S.draftLure.push({blob, url:URL.createObjectURL(blob)}); } catch(e){ toast("That photo format can't be read. Use a JPEG or PNG."); } }
+    renderEntry(); };
+  for (const id of ["#e-lphoto","#e-lcam"]){ const ph=$(id); if (ph) ph.onchange = onLure(ph); }
+  el.querySelectorAll("[data-ldel]").forEach(b=>b.onclick=()=>{ collectEntry(); d.removed=(d.removed||[]).concat(d.lurePhotos.splice(+b.dataset.ldel,1)); renderEntry(); });
+  el.querySelectorAll("[data-ldelnew]").forEach(b=>b.onclick=()=>{ collectEntry(); const [f]=S.draftLure.splice(+b.dataset.ldelnew,1); URL.revokeObjectURL(f.url); renderEntry(); });
   el.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ collectEntry(); d.removed=(d.removed||[]).concat(d.photos.splice(+b.dataset.del,1)); renderEntry(); renderEntryCond(); });
   el.querySelectorAll("[data-delnew]").forEach(b=>b.onclick=()=>{ collectEntry(); const [f]=S.draftFiles.splice(+b.dataset.delnew,1); URL.revokeObjectURL(f.url); renderEntry(); renderEntryCond(); });
   $("#e-when").onchange = ()=>{ collectEntry(); refreshDraftCond(); };
@@ -2365,6 +2476,9 @@ function renderEntry(){
     try {
       for (const f of S.draftFiles){ d.photos.push(await Photos.put(f.blob)); URL.revokeObjectURL(f.url); }
       S.draftFiles=[];
+      d.lurePhotos = d.lurePhotos || [];
+      for (const f of S.draftLure){ d.lurePhotos.push(await Photos.put(f.blob)); URL.revokeObjectURL(f.url); }
+      S.draftLure=[];
       for (const p of (d.removed||[])) await Photos.del(p);
       const rec = Object.assign({}, d); delete rec.removed; delete rec.loadingCond; rec.v=2;
       if (rec.cond && !rec.cond.src) rec.cond.src="manual";
@@ -2412,7 +2526,8 @@ function renderDetail(){
       ${row("Cloud", c.cc!=null?c.cc+" %":null)}${row("Air", c.tmp!=null?c.tmp+" °C":null)}${row("Sea", c.sst!=null?c.sst+" °C":null)}${row("Waves", c.hs!=null?c.hs+" m":null)}${row("Water", c.clarity)}
       ${row("Data", c.src==="model"?"Forecast model":c.src==="history"?"Weather history":c.src==="manual"?"Entered by you":null)}
     </div>
-    ${r.note?`<p class="note">${esc(r.note)}</p>`:""}
+    ${(r.lurePhotos||[]).length?`<div class="secthead"><h3>Lure</h3><span class="fine">${esc([r.lureType, r.lureName].filter(Boolean).join(" · "))}</span></div><div class="gallery lureph">${r.lurePhotos.map(p=>`<img alt="Lure photo" data-ph='${esc(JSON.stringify(p))}'>`).join("")}</div>`:""}
+    ${r.note?`<p class="note" translate="no">${esc(r.note)}</p>`:""}
     <div class="row2"><button class="iconbtn on" id="detedit">Edit</button><button class="iconbtn" id="detmap">Show on map</button><button class="iconbtn danger" id="detdel">Delete</button></div>`;
   el.querySelector("#detback").onclick=()=>{ openPanel("log"); };
   el.querySelector("#detedit").onclick=()=>openEntry(r);
@@ -2451,7 +2566,8 @@ const syncSea = () => { document.getElementById("isobtn").setAttribute("aria-pre
 document.getElementById("isobtn").onclick = ()=>{ S.isoOn=!S.isoOn; store.set("lw.iso",S.isoOn); syncSea(); drawLand(); };
 document.getElementById("dropbtn").onclick = ()=>{ S.dropOn=!S.dropOn; store.set("lw.drop",S.dropOn); syncSea(); drawLand(); };
 syncSea();
-document.getElementById("readout").onclick = async e=>{ const t=e.currentTarget.dataset.copy; try { await navigator.clipboard.writeText(t); toast("Copied "+t); } catch(err){ toast(t); } };
+document.getElementById("readout").onclick = async e=>{ const t=e.currentTarget.dataset.copy; try { await navigator.clipboard.writeText(t); toast("Copied · "+t); } catch(err){ toast(t); } };
+if (window.LW_I18N) window.LW_I18N.onChange(()=>{ heatKey=""; renderAll(); renderDays(); drawLand(); });
 renderAll();
 initLog();
 requestAnimationFrame(frame);
