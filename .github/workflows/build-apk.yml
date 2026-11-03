@@ -5,6 +5,9 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,6 +29,9 @@ jobs:
       - name: Install Capacitor
         run: npm ci
 
+      - name: Stamp the build number into the app
+        run: sed -i "s/__LW_BUILD__/${{ github.run_number }}/" www/index.html
+
       - name: Copy the app into the Android project
         run: npx cap sync android
 
@@ -33,10 +39,21 @@ jobs:
         working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon -PlwBuild=${{ github.run_number }}
 
       - name: Upload the APK
         uses: actions/upload-artifact@v4
         with:
           name: leeway-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      # The app checks this release and shows an update banner to everyone on an older build.
+      # The release note is the first line of the latest commit message.
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk leeway.apk
+          gh release create "v${{ github.run_number }}" leeway.apk \
+            --title "Leeway ${{ github.run_number }}" \
+            --notes "$(git log -1 --pretty=%s)" --latest

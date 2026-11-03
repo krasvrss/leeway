@@ -42,6 +42,16 @@ There are two ways to get the APK. Option 1 needs no software on your computer.
 2. Name the file `.github/workflows/build-apk.yml`.
 3. Paste in the contents of that file from the zip, then click **Commit changes**.
 
+## Updates
+
+Every time a change is uploaded, GitHub builds a new APK and publishes it under **Releases** with a version number. The first line of the change's description becomes the release note.
+
+- **In the app:** when Android users open Leeway, it checks for a newer release (at most every 3 hours). If there is one, a banner appears with a **Download** button. They tap it, open the file and tap **Install**. The update installs over the old version and keeps the catch log.
+- **Link to share:** https://github.com/krasvrss/leeway/releases/latest/download/leeway.apk always gives the newest APK.
+- **Email alerts:** anyone with a GitHub account can open the repository and choose **Watch → Custom → Releases**.
+
+The iPhone web app updates itself the next time it's opened.
+
 ## iPhone (and any phone): install it as a web app
 
 GitHub can also publish Leeway as a web app. On iPhone you add it to your Home Screen, and it then opens full screen with its own icon. It downloads fresh forecasts each time it opens and keeps working offline with the last ones. You don't need the App Store or an Apple developer account.

@@ -112,7 +112,7 @@ async function boot(){
 
 # close main() after the app IIFE and start the loader
 idx = s.rindex('})();\n</script>')
-s = s[:idx] + '})();\n}\n' + LOADER + '\nboot();\nif ("serviceWorker" in navigator && location.protocol==="https:" && location.hostname!=="localhost") navigator.serviceWorker.register("sw.js").catch(()=>{});\n</script>' + s[idx + len('})();\n</script>'):]
+s = s[:idx] + '})();\n}\n' + LOADER + '\nboot();\n' + pathlib.Path('src/update-banner.js').read_text() + '\nif ("serviceWorker" in navigator && location.protocol==="https:" && location.hostname!=="localhost") navigator.serviceWorker.register("sw.js").catch(()=>{});\n</script>' + s[idx + len('})();\n</script>'):]
 
 for k, f in DATA.items():
     assert s.count(k) == 1, k
