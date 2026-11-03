@@ -29,7 +29,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:1
 *{box-sizing:border-box}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.app{height:100%;display:grid;grid-template-rows:auto 1fr;}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr;grid-template-columns:minmax(0,1fr)}
+.bar,.main{min-width:0}
 /* top bar */
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:10px;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
@@ -196,14 +197,30 @@ ol.lures{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink);font-weight:500;margin-right:4px}
 .tackle{border-left:3px solid var(--accent);padding-left:8px}
 .hbtns{display:flex;gap:6px}
+.fishbar{order:10;flex:0 0 100%;width:100%;min-width:0;max-width:100%;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0;align-items:center;scroll-padding:0 40px}
+.fishbar::-webkit-scrollbar{display:none}
+.fchip{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 9px 4px 7px;font-size:12.5px;font-weight:600;color:var(--ink)}
+.fchip i{width:9px;height:9px;border-radius:50%;flex:none;background:var(--spc)}
+.fchip b{font:600 11px var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.fchip[aria-pressed="true"]{background:var(--spc);border-color:var(--spc);color:#fff}
+.fchip[aria-pressed="true"] i{background:#fff}
+.fchip[aria-pressed="true"] b{color:rgba(255,255,255,.85)}
+.fsep{flex:none;width:1px;height:18px;background:var(--line);margin:0 2px}
+.seasonbars{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:74px;margin:4px 0 2px}
+.seasonbars div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
+.seasonbars i{display:block;width:100%;border-radius:3px 3px 0 0;opacity:.45;min-height:3px}
+.seasonbars div.cur i{opacity:1}
+.seasonbars span{font:500 10px var(--f-mono);color:var(--muted)}
+.seasonbars div.cur span{color:var(--ink);font-weight:700}
 @media (max-width:820px){
   .bar{gap:8px;padding-block:8px}
-  .hbtns{order:1;width:100%}
+  .fishbar{order:1}
+  .hbtns{order:2;width:100%}
   .hbtns .calbtn{flex:1;justify-content:center;padding:7px 4px;border-color:var(--line);white-space:nowrap;min-width:0}
   .hbtns .calbtn svg{display:none}
-  .bar .seg{order:2;flex:1;justify-content:space-between}
+  .bar .seg{order:3;flex:1;justify-content:space-between}
   .bar .seg button{flex:1;padding:5px 4px}
-  .unitbtn{order:3}
+  .unitbtn{order:4}
   .seactl{top:166px;width:auto}
   .seactl button{padding:4px 8px}
   .readout{bottom:150px;font-size:10px;padding:4px 7px}
@@ -302,6 +319,7 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 <div class="app">
   <header class="bar">
     <div class="brand"><b>Leeway</b><span>marine wind · Istria &amp; Adriatic</span></div>
+    <div class="fishbar" id="fishbar" role="group" aria-label="Fish"></div>
     <div class="hbtns"><button class="calbtn" id="calbtn"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="2.5" width="12" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" stroke-width="1.4"/></svg>Calendar</button><button class="calbtn" id="trollbtn" aria-pressed="false" title="Show or hide trolling lines"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 11c3-1 5-4 6-8M8 3l6 7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="11" r="1.6" fill="currentColor"/></svg>Trolling</button><button class="calbtn" id="logbtn"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 7c3-5 8-5 11 0-3 5-8 5-11 0z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 7l3-3v6z" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg>Catch log</button></div>
     <div class="seg" role="group" aria-label="Map layer">
       <button id="ly-wind" aria-pressed="true" data-layer="wind">Wind</button>
@@ -2210,7 +2228,6 @@ function fishSection(){
   const shown = S.allZones ? rank : rank.slice(0,6);
   return `<section id="fish" class="fish">
     <div class="secthead"><h3>Fish zones · Poreč to Novigrad</h3><label class="tog"><input type="checkbox" id="fishon" ${S.fishOn?"checked":""}> on map</label></div>
-    ${speciesChips("fishsp", sp)}
     <p class="fine season">${seasonLine(tdate(S.hour))}</p>
     ${(()=>{ const v=sstNowAt(S.sel?S.sel.lat:45.3); return `<p class="fine sstline"><b class="k">Sea temp</b> ${v.toFixed(1)} °C · <span style="color:${sstPts(sp,v)>=3?"#1f9d55":sstPts(sp,v)>=0?"var(--muted)":"#c7553d"}">${sstVerdict(sp,v)}</span></p>`; })()}
     <div class="seg stages" role="group" aria-label="Tide stage">${STAGE_KEYS.map(k=>`<button data-stage="${k}" aria-pressed="${stage===k}" style="--st:${STAGES[k].color}">${STAGES[k].short}${auto===k?" •":""}</button>`).join("")}</div>
@@ -2242,7 +2259,19 @@ function wireFish(el){
   f.querySelector("#fishtroll").onclick = openTroll;
 }
 function refreshFish(){ const el=document.getElementById("sheetin"), f=el && el.querySelector("#fish"); if (!f) return; f.outerHTML = fishSection(); wireFish(el); }
-function setSpecies(k){ if (!SPECIES[k]) return; S.species=k; store.set("lw.species",k); heatKey=""; drawLand(); if (S.panel==="cal") renderCal(); else refreshFish(); }
+let todayCache={};
+function todayOutlook(sp){ const d=new Date(); d.setHours(0,0,0,0); const k=sp+"|"+PERS_V+"|"+d.getTime(); return todayCache[k] || (todayCache[k]=dayOutlook(d, sp)); }
+function renderFishbar(){
+  const el=document.getElementById("fishbar"); if (!el) return; let html="", g0=null;
+  for (const k of SP_KEYS){ const sd=SPECIES[k], o=todayOutlook(k);
+    if (g0 && sd.group!==g0) html+=`<span class="fsep" aria-hidden="true"></span>`; g0=sd.group;
+    html+=`<button class="fchip" data-fsp="${k}" aria-pressed="${S.species===k}" style="--spc:${sd.color}" title="${esc(sd.name)}: ${esc(o.lvl[1])}"><i style="${S.species===k?"":`background:${o.lvl[2]}`}"></i>${esc(sd.name)}<b>${o.sc}</b></button>`; }
+  el.innerHTML=html;
+  el.querySelectorAll("[data-fsp]").forEach(b=>b.onclick=()=>{ if (S.species===b.dataset.fsp && S.panel!=="cal"){ openCal(); return; } setSpecies(b.dataset.fsp); });
+  const on=el.querySelector('[aria-pressed="true"]'); // scroll only the bar, never the page
+  if (on){ const l=on.offsetLeft-el.offsetLeft, r=l+on.offsetWidth; if (l<el.scrollLeft+8) el.scrollLeft=l-30; else if (r>el.scrollLeft+el.clientWidth-8) el.scrollLeft=r-el.clientWidth+30; }
+}
+function setSpecies(k){ if (!SPECIES[k]) return; S.species=k; store.set("lw.species",k); heatKey=""; drawLand(); renderFishbar(); if (S.panel==="cal") renderCal(); else if (S.panel==="troll"){ S.trollSp = TROLL[k] ? k : S.trollSp; renderTroll(); } else refreshFish(); }
 const showsFish = s => s && (s.id==="tar" || inFB(s.lon, s.lat));
 
 /* ---------- calendar panel ---------- */
@@ -2273,8 +2302,10 @@ function renderCal(){
   const ctxOf = (c,wi) => c.have ? c : Object.assign({}, c, {stage: SPECIES[sp].defStage || (wi===1?"high":"ebb")});
   el.innerHTML = `
     <div class="sh-head"><div class="grow"><h2>Fish calendar</h2><div class="coords">Poreč – Červar – Tarska uvala – Novigrad · next ${CAL_DAYS} days</div></div><button class="iconbtn" id="calback">← Map</button></div>
-    ${speciesChips("calsp", sp)}
+    <div class="secthead"><h3 style="color:${SPECIES[sp].color}">${esc(SPECIES[sp].name)} · ${esc(SPECIES[sp].local)}</h3><span class="fine">Season</span></div>
+    <div class="seasonbars" role="img" aria-label="Season">${SPECIES[sp].months.map((v,i)=>`<div class="${i===sel.day.getMonth()?"cur":""}" title="${MONTHS[i]}: ${v>=.85?"peak season":v>=.6?"good season":v>=.35?"fair season":"off season"}"><i style="height:${Math.round(v*100)}%;background:${SPECIES[sp].color}"></i><span>${esc(tr(MONTHS[i])[0])}</span></div>`).join("")}</div>
     <p class="fine season">${seasonLine(sel.day)}</p>
+    <div class="secthead"><h3>By day</h3><span class="fine">tap a day for times, bait and lures</span></div>
     <div class="calgrid">${wk}${cells}</div>
     <div class="legend-row fine">${LEVELS.slice().reverse().map(l=>`<span><i style="background:${l[2]}"></i>${l[1]}</span>`).join("")}<span><b class="fxk">F</b> live forecast</span></div>
     <section class="dayd">
@@ -2314,7 +2345,7 @@ function normalizeRec(r){
   return o;
 }
 let catchCol=null, dbState="local";
-function catchesChanged(){ PERS_V++; persCache={}; calCache={}; heatKey=""; drawLand(); }
+function catchesChanged(){ PERS_V++; persCache={}; calCache={}; todayCache={}; heatKey=""; drawLand(); renderFishbar(); }
 function loadLocalCatches(){ S.catches = store.get("lw.catches", []).map(normalizeRec); catchesChanged(); }
 async function saveRec(rec){
   const clean = JSON.parse(JSON.stringify(rec)); delete clean.id;
@@ -2642,7 +2673,7 @@ function renderPanel(){
 }
 
 /* ---------- boot ---------- */
-function renderAll(){ renderWhen(); renderLegend(); renderSpots(); renderSheet(); }
+function renderAll(){ renderWhen(); renderLegend(); renderSpots(); renderSheet(); renderFishbar(); }
 setPressed("[data-layer]","layer",S.layer); syncUnit();
 renderPlay(); renderDays();
 new ResizeObserver(()=>resize()).observe(wrap);

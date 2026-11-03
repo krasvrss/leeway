@@ -158,3 +158,4 @@ T += [
 ("Map info","Informacije o karti","Podatki o zemljevidu"),
 ("m/s","m/s","m/s"),
 ]
+T += [("Fish","Riba","Ribe"),("By day","Po danima","Po dnevih"),("tap a day for times, bait and lures","dodirnite dan za vremena, mamce i varalice","tapnite dan za čase, vabe in umetne vabe")]
