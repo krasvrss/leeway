@@ -1,0 +1,8 @@
+{
+  "appId": "app.leeway.bluefish",
+  "appName": "Leeway",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#0f2128"
+  }
+}
