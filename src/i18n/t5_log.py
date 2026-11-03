@@ -133,3 +133,21 @@ for d,h,s in zip(DIRS,HR,SL):
 T.append(("The score adds up season, moon, solunar periods at dawn and dusk, sea temperature and, where the live forecast reaches, tide, wind and waves at the best times of day for this species.","Ocjena zbraja sezonu, mjesec, solunarna razdoblja u zoru i sumrak, temperaturu mora te, dokle seže prognoza uživo, plimu, vjetar i valove u najbolje doba dana za ovu vrstu.","Ocena sešteje sezono, luno, solunarna obdobja ob zori in mraku, temperaturo morja ter, kjer seže napoved v živo, plimovanje, veter in valove ob najboljših delih dneva za to vrsto."))
 MOON = [("New moon","Mlađak","Mlaj"),("Waxing crescent","Mladi mjesec","Rastoči srp"),("First quarter","Prva četvrt","Prvi krajec"),("Waxing gibbous","Mjesec raste","Rastoča luna"),("Full moon","Uštap","Ščip"),("Waning gibbous","Mjesec pada","Pojemajoča luna"),("Last quarter","Zadnja četvrt","Zadnji krajec"),("Waning crescent","Stari mjesec","Pojemajoči srp")]
 for e,h,s_ in MOON: T.append((e+" ({n}%)", h+" ({n}%)", s_+" ({n}%)"))
+T += [
+("Rocky bottom","Kamenito dno","Skalnato dno"),
+("Seagrass likely","Vjerojatno morska trava","Verjetno morska trava"),
+("Sand","Pijesak","Pesek"),
+("Gravel & shell","Šljunak i ljušture","Prod in lupine"),
+("Sandy mud","Pjeskoviti mulj","Peščeni mulj"),
+("Mud","Mulj","Mulj"),
+("steep edge","strmi rub","strm rob"),
+("mussel farm","uzgajalište dagnji","gojišče školjk"),
+("ideal water temperature for this species","idealna temperatura mora za ovu vrstu","idealna temperatura morja za to vrsto"),
+("good water temperature for this species","dobra temperatura mora za ovu vrstu","dobra temperatura morja za to vrsto"),
+("water temperature is fair","temperatura mora je osrednja","temperatura morja je srednja"),
+("water on the warm side, fish go deeper","more je toplije, riba odlazi dublje","morje je toplejše, ribe gredo globlje"),
+("too warm, activity is low","pretoplo, aktivnost je slaba","pretoplo, aktivnost je nizka"),
+("water on the cool side, fish are slower","more je hladnije, riba je sporija","morje je hladnejše, ribe so počasnejše"),
+("too cold, activity is low","prehladno, aktivnost je slaba","prehladno, aktivnost je nizka"),
+("Oslić (hake)","Oslić","Oslič"),
+]

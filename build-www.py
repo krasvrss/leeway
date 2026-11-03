@@ -13,6 +13,7 @@ DATA = {
     '__HIRES__': ROOT / 'src/data/coast-porec-tar.json',   # OpenStreetMap coastline, Poreč to Novigrad
     '__BATHY__': ROOT / 'src/data/depth-tarska.json',      # EMODnet depth grid, Červar to Tarska uvala
     '__SEAMARKS__': ROOT / 'src/data/seamarks.json',      # OpenStreetMap seamarks: lights, beacons, reefs, shellfish beds
+    '__SEABED__': ROOT / 'src/data/seabed.json',          # EMODnet EUSeaMap 2025 seabed type, 0.001° grid (run-length coded)
 }
 
 s = SRC.read_text()

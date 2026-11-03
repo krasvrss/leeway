@@ -6,10 +6,12 @@ Each time it opens, the app downloads a fresh 7-day forecast from Open-Meteo (wi
 
 What's inside:
 - **Three languages:** English, Slovenščina and Hrvatski, picked from the menu at the top right. The app remembers your choice.
-- **Fish zones from Poreč and Funtana to Červar, Tarska uvala and Novigrad** for 14 species, rated by tide stage and time of day. The whole area is one equal grid of about 400 m squares (columns A–S west to east, rows 1–46 north to south), like the squares on a chart:
+- **Fish zones from Poreč and Funtana to Červar, Tarska uvala and Novigrad** for 13 species, rated by tide stage and time of day. The whole area is one equal grid of about 400 m squares (columns A–S west to east, rows 1–46 north to south), like the squares on a chart:
   - Predators: seabass, bluefish, leerfish, dentex, bonito, gof (amberjack), garfish.
-  - Bream and bottom fish: orada, fratar, špar, ribon, hake.
+  - Bream and bottom fish: orada, fratar, špar, ribon.
   - Squid and cuttlefish.
+- **Habitat from data, not hand-drawn areas:** every ~110 m spot gets its own habitat from the seabed slope (EMODnet depth), how sheltered it is, the seabed type (EMODnet EUSeaMap 2025: mud, sandy mud, sand, gravel) and nearby mussel farms and buoys (OpenStreetMap). Rock on the steep coastal fringe and seagrass on shallow sheltered soft bottom are inferred, because no survey maps them here. Each species has its own bottom preferences.
+- **Water temperature on the radar:** the live sea temperature from the three forecast points scales each species' map for the hour on the time slider, with a line saying whether the water suits that fish.
 - **Chart view**: black water, depth lines every metre, blue shallows and seamarks from OpenStreetMap (lights, cardinal beacons, marinas, reefs, shellfish beds), with a scale in nautical miles.
 - **Seafloor contours** every 2 m, purple shading on steep drop-offs, and a live coordinate readout (degrees and minutes) with depth.
 - **Trolling lines** for Poreč, Červar and Tarska–Novigrad, drawn along the depth contours, with bait, lures, speed and rig for each target fish.
@@ -130,6 +132,7 @@ The APK above is a debug build. It's fine for your own phone and for friends. To
 - **Forecasts:** Open-Meteo (https://open-meteo.com), CC BY 4.0.
 - **Coastline:** © OpenStreetMap contributors, ODbL.
 - **Depth:** EMODnet Bathymetry DTM.
+- **Seabed type:** EMODnet Seabed Habitats, EUSeaMap 2025.
 - **Wider coastline:** Natural Earth.
 
 The bluefish zones, daily scores and lure picks are a guide built from depth, tide, light and weather. They are not fish sightings.

@@ -340,6 +340,7 @@ const LIVE = __LIVE__;
 const HIRES = __HIRES__;
 const BATHY = __BATHY__;
 const SEAMARKS = __SEAMARKS__;
+const SEABED = __SEABED__;
 (() => {
 "use strict";
 /* ---------- constants & state ---------- */
@@ -1503,6 +1504,64 @@ const areaOfLat = la => la>=45.296 ? "tarska" : la>=45.255 ? "cervar" : "porec";
 const MOUTH = [13.5945,45.3163];
 function mDist(lo1,la1,lo2,la2){ return Math.hypot((lo1-lo2)*111320*KX, (la1-la2)*111320); }
 function segDist(px,py,ax,ay,bx,by){ const dx=bx-ax, dy=by-ay, L=dx*dx+dy*dy; let t=L? ((px-ax)*dx+(py-ay)*dy)/L : 0; t=Math.max(0,Math.min(1,t)); return Math.hypot(px-(ax+t*dx), py-(ay+t*dy)); }
+
+/* ---------- habitat from data, per depth spot (~110 m) ----------
+   slope from the EMODnet depth grid, shelter from how much land surrounds a spot,
+   seabed type from EMODnet EUSeaMap 2025, mussel farms and buoys from OpenStreetMap seamarks.
+   Rock and seagrass are inferred (no survey covers them here): rock on the steep coastal fringe,
+   seagrass on shallow, gentle, sheltered soft bottom. */
+const SEABED_G = (() => { const g=[]; SEABED.g.replace(/,$/,"").split(",").forEach(t=>{ const n=parseInt(t.slice(1),36); for (let i=0;i<n;i++) g.push(+t[0]); }); return g; })();
+function seabedAt(lon,lat){ const i=Math.round((lon-SEABED.w)/SEABED.step), j=Math.round((lat-SEABED.s)/SEABED.step); if (i<0||j<0||i>=SEABED.nx||j>=SEABED.ny) return 0; return SEABED_G[j*SEABED.nx+i]||0; }
+const FARMS = (SEAMARKS.ways||[]).filter(w=>w.k==="marine_farm").map(w=>[w.c.reduce((a,p)=>a+p[0],0)/w.c.length, w.c.reduce((a,p)=>a+p[1],0)/w.c.length]);
+const FLOATS = (SEAMARKS.marks||[]).filter(m=>/^buoy_|beacon_isolated_danger/.test(m.k)).map(m=>[m.lon,m.lat]);
+const HABT = {drop:2.4, shelter:.5, point:.38};
+function classifyCells(cells, idx, w, R0, C0){
+  const dlo=BD.dlo, dla=BATHY.DLA, C=BD.cols, v=BD.v;
+  const raw = cells.map(c=>{ const d0=v[c.i*C+c.k]; if (isNaN(d0)) return 0; let m=0;
+    for (const [a,b] of [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]]){ const ii=c.i+a, kk=c.k+b; if (ii<0||kk<0||ii>=BD.rows||kk>=C) continue; const d1=v[ii*C+kk]; if (isNaN(d1)) continue;
+      m=Math.max(m, Math.abs(d1-d0)/Math.hypot(a*dla*111320, b*dlo*111320*KX)*100); } return m; });
+  cells.forEach((c,n)=>{ let a=0,k=0; for (let dr=-1;dr<=1;dr++) for (let dk=-1;dk<=1;dk++){ const r=c.i+dr-R0, q=c.k+dk-C0; if (r<0||q<0||q>=w) continue; const j=idx[r*w+q]; if (j>=0 && j<raw.length){ a+=raw[j]; k++; } } c.slope = k? a/k : raw[n]; });
+  for (const c of cells){
+    let near=0, far=0;
+    for (let a=0;a<16;a++){ const ang=a*Math.PI/8, ex=Math.cos(ang)/(111320*KX), ey=Math.sin(ang)/111320;
+      for (const r of [250,600,1100]){ if (isLand(c.lon+ex*r, c.lat+ey*r)){ far++; if (r<=600) near++; break; } } }
+    c.enc=far/16; c.enc6=near/16;
+    const sb=seabedAt(c.lon,c.lat), d=c.d;
+    c.sub = (c.ds<=150 || (c.slope>=4 && d<25) || (sb===0 && c.ds<400)) ? "rock"
+      : (d>=1.5 && d<=12 && c.slope<1.6 && c.enc>=.45 && sb!==4) ? "seagrass"
+      : sb===4 ? "coarse" : sb===1 ? "mud" : sb===2 ? "sandymud" : sb===3 ? "sand" : d<15 ? "sand" : "sandymud";
+    c.farm = Math.min(...FARMS.map(p=>mDist(c.lon,c.lat,p[0],p[1])), 1e9);
+    c.float = Math.min(...FLOATS.map(p=>mDist(c.lon,c.lat,p[0],p[1])), 1e9);
+    c.h = c.pier<100 ? "harbour"
+      : c.dm<350 ? "mouth"
+      : (c.dm<2600 && c.lon<MOUTH[0]-0.002 && Math.abs(c.lat-45.3115)<0.0035 && d<10) ? "seam"
+      : (c.slope>=HABT.drop && d>=4) ? "dropoff"
+      : (c.ds<=300 && c.enc6<=HABT.point && d<14) ? "point"
+      : (d<3.5 && c.enc>=HABT.shelter) ? "flat"
+      : c.ds<=300 ? "shore"
+      : d<18 ? "mid" : "deep";
+  }
+}
+// how much each species likes each kind of bottom, and structure (steep ground, farms, buoys)
+const SUBPREF = {
+  bluefish:{}, leerfish:{rock:1.05}, bonito:{}, garfish:{},
+  seabass:{rock:1.2, seagrass:1.05, mud:.9, sandymud:.95},
+  dentex:{rock:1.3, coarse:1.15, sand:.8, sandymud:.75, mud:.7, seagrass:.85},
+  gof:{rock:1.3, coarse:1.15, sand:.8, sandymud:.75, mud:.7, seagrass:.8},
+  orada:{seagrass:1.1, sand:1.1, mud:1.05, sandymud:1.05, rock:.95, coarse:.95},
+  fratar:{rock:1.3, coarse:1.1, seagrass:1, sand:.85, sandymud:.75, mud:.7},
+  spar:{seagrass:1.3, rock:1.1, sand:1, coarse:.95, sandymud:.8, mud:.75},
+  ribon:{sand:1.2, coarse:1.2, sandymud:1, mud:.85, rock:.85, seagrass:.85},
+  squid:{seagrass:1.25, sand:1.05, rock:1, sandymud:.9, mud:.85},
+  cuttlefish:{seagrass:1.3, sand:1.15, sandymud:.95, mud:.9, coarse:.9, rock:.75}
+};
+const STRUCT = {dentex:{slope:.35}, gof:{slope:.35, farm:.35, float:.25}, bluefish:{slope:.15, farm:.15}, bonito:{slope:.1}, orada:{farm:.25}, fratar:{slope:.1, farm:.1}, seabass:{slope:.05}};
+function structF(sp, c){ const t=STRUCT[sp]; if (!t) return 1; let f=1;
+  if (t.slope) f *= 1 + t.slope*Math.min(1, c.slope/4);
+  if (t.farm) f *= 1 + t.farm*Math.exp(-c.farm/250);
+  if (t.float) f *= 1 + t.float*Math.exp(-c.float/200);
+  return f; }
+const SUBLABEL = {rock:"Rocky bottom", seagrass:"Seagrass likely", sand:"Sand", coarse:"Gravel & shell", sandymud:"Sandy mud", mud:"Mud"};
 const FC = (() => { // sea cells of the depth grid inside the fish area
   const cells=[], dlo=BD.dlo, dla=BATHY.DLA;
   const C0=Math.max(0,Math.ceil((FB.w-BATHY.LO0)/dlo)), C1=Math.min(BD.cols-1,Math.floor((FB.e-BATHY.LO0)/dlo));
@@ -1515,12 +1574,7 @@ const FC = (() => { // sea cells of the depth grid inside the fish area
     let d = BD.v[i*BD.cols+k]; if (isNaN(d)) d = 1;
     let shore=false; for (const [a,b] of [[1,0],[-1,0],[0,1],[0,-1]]) if (isLand(lon+a*dlo*0.9, lat+b*dla*0.9)) shore=true;
     let pier=1e9; for (const l of piers) for (let j=1;j<l.length;j++){ const m=segDist(lon*KX,lat,l[j-1][0]*KX,l[j-1][1],l[j][0]*KX,l[j][1])*111320; if (m<pier) pier=m; }
-    let h = z.hab;
-    if (pier<100) h="harbour";
-    else if (mDist(lon,lat,MOUTH[0],MOUTH[1])<320) h="mouth";
-    else if (shore && (h==="mid"||h==="deep"||h==="dropoff")) h="shore";
-    else if (h==="point" && d>10) h="dropoff";
-    cells.push({i,k,lon,lat,d,z:z.id,h});
+    cells.push({i,k,lon,lat,d,z:z.id,pier,shore});
   }
   // distance to shore in metres (breadth-first over the cell grid)
   const w=C1-C0+1, h=R1-R0+1, idx=new Int32Array(w*h).fill(-1), dist=new Float32Array(w*h).fill(1e9), q=[];
@@ -1529,8 +1583,11 @@ const FC = (() => { // sea cells of the depth grid inside the fish area
   for (let qi=0; qi<q.length; qi++){ const j=q[qi], r=(j/w)|0, k=j%w;
     for (const [dr,dk] of [[1,0],[-1,0],[0,1],[0,-1]]){ const rr=r+dr, kk=k+dk; if (rr<0||kk<0||rr>=h||kk>=w) continue; const jj=rr*w+kk; if (dist[jj]>dist[j]+1){ dist[jj]=dist[j]+1; q.push(jj); } } }
   cells.forEach(c=>{ const dd=dist[(c.i-R0)*w+(c.k-C0)]; c.ds = dd>=1e9 ? 3000 : Math.max(0,(dd-0.5))*112; c.dm = mDist(c.lon,c.lat,MOUTH[0],MOUTH[1]); });
+  classifyCells(cells, idx, w, R0, C0);
   return {cells,C0,C1,R0,R1,w,h,idx};
 })();
+FZ.forEach(z=>{ const cs=FC.cells.filter(c=>c.z===z.id), cnt=(f)=>{ const o={}; cs.forEach(c=>o[f(c)]=(o[f(c)]||0)+1); return Object.entries(o).sort((a,b)=>b[1]-a[1]); };
+  if (cs.length){ z.hab = cnt(c=>c.h)[0][0]; z.sub = cnt(c=>c.sub)[0][0]; z.steep = cs.some(c=>c.slope>=HABT.drop); z.farm = cs.some(c=>c.farm<300); } });
 FZ.forEach(z=>{ const ds=FC.cells.filter(c=>c.z===z.id).map(c=>c.d).sort((a,b)=>a-b); z.n=ds.length;
   z.dmin = ds.length? Math.max(0,Math.round(ds[Math.floor(ds.length*0.1)])) : 0; z.dmax = ds.length? Math.round(ds[Math.floor(ds.length*0.9)]) : 0;
   const c=z.c; z.lp=[c.reduce((a,p)=>a+p[0],0)/c.length, c.reduce((a,p)=>a+p[1],0)/c.length]; });
@@ -1609,7 +1666,7 @@ function personal(sp){
 
 /* ---------- scoring ---------- */
 const NEAR = {bluefish:.15, leerfish:.45, seabass:.6};
-/* ---------- more species: dentex, bonito, gof, garfish, bream, hake, squid, cuttlefish ---------- */
+/* ---------- more species: dentex, bonito, gof, garfish, bream, squid, cuttlefish ---------- */
 const L4 = a => ({M:a,S:a,E:a,D:a});
 Object.assign(SPECIES.bluefish, {group:"pred", moonType:"pred", bestG:"E", defStage:"ebb", troll:true,
   wx:{st:[0,6,0,8], lo:5, hi:15, good:5, bad:22, badPts:-14, mid:-4, wmax:1.2, wPts:-8, cc:2}, sst:[[[19,99,10],[17,19,5],[15.5,17,-6]],-20]});
@@ -1637,7 +1694,7 @@ Object.assign(SPECIES, {
     rules:"Check the current Croatian rules before you keep any."},
   gof:{name:"Amberjack", local:"gof", color:"#b5651d", group:"pred", moonType:"pred", bestG:"E", defStage:"flood", troll:true,
     months:[.05,.05,.05,.1,.25,.5,.75,.9,1,.85,.45,.15], depth:[5,12,40,70],
-    hab:{mouth:.15,flat:.1,seam:.4,point:.85,shore:.3,harbour:.35,dropoff:1,mid:.7,deep:.75},
+    hab:{mouth:.15,flat:.1,seam:.4,point:.85,shore:.3,harbour:.35,dropoff:1,mid:.45,deep:.5},
     stage:{M:[.5,.8,.6,.8],S:[.5,.9,.7,.9],E:[.6,1,.7,1],D:[.7,.9,.7,.9]},
     light:{M:[1,.6,.9,.2],S:[1,.6,.9,.2],E:[1,.8,1,.3],D:[1,.85,1,.3]},
     wx:{st:[0,6,0,6], lo:0, hi:14, good:4, bad:18, badPts:-8, mid:0, wmax:1, wPts:-6}, sst:[[[20,99,10],[18,20,4],[16,18,-6]],-15],
@@ -1685,14 +1742,6 @@ Object.assign(SPECIES, {
     stageNote:{low:"Ribon feed on the bottom through the tide; slack water makes it easier to hold bottom.", flood:"A gentle current spreads your bait scent. Good drifting.", high:"Steady bottom feeding; drift the sand edges.", ebb:"Moving water helps a slow drift over the sand."},
     habNote:{deep:"Sand and mud at 20 m and more is classic ribon ground; fish it from a boat.", mid:"Sand and rubble at 12–20 m is good ribon ground.", dropoff:"Ribon feed where the slope meets sand and rubble.", point:"Ribon hold where rock meets sand below the points."},
     rules:"Minimum size 15 cm."},
-  hake:{name:"Hake", local:"oslić", color:"#7a7f52", group:"bream", moonType:"dark", bestG:"D", defStage:"flood", night:true,
-    months:[.8,.8,.7,.5,.4,.3,.3,.3,.4,.6,.8,.9], depth:[25,40,200,400],
-    hab:{mouth:.02,flat:.02,seam:.05,point:.05,shore:.03,harbour:.02,dropoff:.4,mid:.5,deep:1},
-    stage:L4([.8,.9,.8,.9]), light:L4([.6,.3,.9,1]),
-    wx:{st:[0,2,0,2], lo:0, hi:12, good:5, bad:15, badPts:-10, mid:0, wmax:.6, wPts:-8}, sst:[[[0,16,6],[16,20,0]],-6],
-    stageNote:{low:"Hake stay on the bottom; the tide matters little.", flood:"Hake rise off the bottom at dusk to feed.", high:"Hake feed through the night near the bottom.", ebb:"Hake feed through the night near the bottom."},
-    habNote:{deep:"Hake mostly live deeper than 40 m. In winter a few come into this 20–25 m channel at night.", mid:"Only the odd hake this shallow, and only at night."},
-    rules:"Minimum size 20 cm (EU). Hake here are a winter night fishery from a boat."},
   squid:{name:"Squid", local:"lignja", color:"#d4622a", group:"ceph", moonType:"squid", bestG:"S", defStage:"flood", night:true,
     months:[.9,.7,.5,.3,.2,.15,.15,.2,.4,.8,1,1], depth:[2,4,20,35],
     hab:{mouth:.3,flat:.7,seam:.6,point:.7,shore:.8,harbour:.9,dropoff:.7,mid:.6,deep:.4},
@@ -1712,7 +1761,7 @@ Object.assign(SPECIES, {
 });
 const GROUPS = [["pred","Predators"],["bream","Bream & bottom"],["ceph","Squid & cuttlefish"]];
 SP_KEYS.length = 0; GROUPS.forEach(([g])=>Object.keys(SPECIES).forEach(k=>{ if (SPECIES[k].group===g) SP_KEYS.push(k); }));
-Object.assign(NEAR, {gof:.1, garfish:.3, dentex:.05, bonito:0, orada:.35, fratar:.45, spar:.5, ribon:0, hake:0, squid:.25, cuttlefish:.45});
+Object.assign(NEAR, {gof:.1, garfish:.3, dentex:.05, bonito:0, orada:.35, fratar:.45, spar:.5, ribon:0, squid:.25, cuttlefish:.45});
 function habNoteOf(sp, h){ const s=SPECIES[sp], n=s.habNote[h]; if (n) return n; const v=s.hab[h]; return v>=.7 ? "Good ground for this species." : v>=.4 ? "Some fish here." : "Few fish here."; }
 
 /* ---------- bait and lure picks for the new species ---------- */
@@ -1759,11 +1808,6 @@ function extraPicks(sp, ctx){
       P("Worms or sardine pieces","Hooks #4–#8",[],"Same paternoster; slow drift along the edge where rock meets sand."),
       P("Small slow jig or inchiku","30–60 g",["pinkwhite","glow"],"Gentle lifts close to the bottom; ribon peck rather than slam it.")],
     rig:"0.25–0.30 mm main line with 0.20–0.25 mm snoods. Minimum size 15 cm."};
-  if (sp==="hake") return {picks:[
-      P("Sardine strips","2-hook bottom rig, #1–1/0",[],"Anchor or drift at dusk and after dark in the deepest water. Hake bite best in the first hours of darkness."),
-      P("Slow jig","60–100 g",["glow","chrome"],"Work it slowly just off the bottom at night."),
-      P("Small whole fish (girica, sardine)","Hook 1/0–2/0",[],"Bottom rig in the channel on winter nights.")],
-    rig:"0.35–0.40 mm leader: hake have needle teeth. This is boat fishing; there are few hake inside 20 m."};
   if (sp==="squid") return {picks:[
       P("Squid jig (egi)","Size 2.5–3.0", ctx.light==="night" ? ["glow","pinkwhite"] : ctx.clar!=="clear" ? ["gold","pinkwhite"] : ["natural","gold"],"Cast, count it down close to the seagrass, give 2–3 sharp lifts, then let it glide and sink for 5–10 seconds. Squid grab it on the fall."),
       P("Float jig with sardine (totanara)","Small luminous jig, sardine tied on",[],"At night under harbour and marina lights: let it drift slowly at 2–4 m."),
@@ -1812,8 +1856,7 @@ const TROLL = {
     {lure:"Deep-diving minnow", size:"15–20 cm, dives 8–15 m", col:["sardine","pinkwhite"]},
     {lure:"Feathers / squid skirt", size:"10–15 cm", col:["white","pinkwhite"]}],
     setup:"Work the drop-off and isolated rocks at 15–30 m at first light, and pass close to buoys, mussel farms and floating objects. When a gof hooks up, steer away from the rocks straight away.",
-    rig:"60–80 lb fluorocarbon leader and a strong drag."},
-  hake:{speed:"not trolled", items:[], setup:"Hake aren't caught trolling. They live on the bottom, mostly deeper than 40 m, and only a few come into the 20–25 m channel on winter nights. Anchor or drift there after dark with sardine strips on a 2-hook bottom rig.", rig:"0.35–0.40 mm leader."}
+    rig:"60–80 lb fluorocarbon leader and a strong drag."}
 };
 // Troll lines snap to a depth band; Červar lines are traced along the depth contour.
 const ROUTES = [
@@ -1830,13 +1873,13 @@ const ROUTES = [
     note:"Past Valetica, Rt Razba, the mouth of Luka Červar, Mali Školj, the Mrčana coves and Rt Busuja, about 100–250 m off the rocks."},
   {id:"s-edge", area:"south", name:"Červar plateau edge", contour:14, targets:["dentex","bonito","gof","bluefish"],
     note:"Where the 12–16 m plateau starts to drop off, about 1 km out. Dentex and bonito follow this edge at first light."},
-  {id:"s-out", area:"south", name:"Offshore Červar", contour:20, targets:["bonito","hake"],
+  {id:"s-out", area:"south", name:"Offshore Červar", contour:20, targets:["bonito","gof"],
     note:"The open 20–25 m water about 2.5 km out, for bonito schools in autumn."},
   {id:"p-in", area:"porec", name:"Poreč inshore: Rt Materada to Funtana", contour:7, lat:[45.1815,45.2535], targets:["leerfish","seabass","bluefish"],
     note:"Past Rt Sv. Martin, outside Sv. Nikola island, along Brulo and Plava Laguna and round the Zelena Laguna islets to Funtana. Keep clear of the swimming zones off the beaches."},
   {id:"p-edge", area:"porec", name:"Poreč plateau edge", contour:14, lat:[45.1815,45.2535], targets:["dentex","bonito","gof","bluefish"],
     note:"The 12–16 m edge about 1–1.5 km off the coast, outside the islets. Dentex and bonito follow it at first light."},
-  {id:"p-out", area:"porec", name:"Offshore Poreč", contour:20, lat:[45.1815,45.2535], targets:["bonito","hake"],
+  {id:"p-out", area:"porec", name:"Offshore Poreč", contour:20, lat:[45.1815,45.2535], targets:["bonito","gof"],
     note:"Open 20–26 m water 2–3 km out, where bonito schools pass in autumn."}
 ];
 function snapRoute(guide, [lo,hi]){
@@ -1916,14 +1959,33 @@ function renderTroll(){
   el.querySelectorAll("#trsp [data-sp]").forEach(b=>b.onclick=()=>{ S.trollSp=b.dataset.sp; renderTroll(); });
 }
 
+
+/* ---------- water temperature on the radar ----------
+   Live sea temperature from the three forecast points (Poreč, Červar, Tarska), blended by latitude,
+   for the hour shown on the time slider. Each species' temperature preference scales its map. */
+function sstNowAt(lat){
+  const i = liveIdx(S.hour), pts = LIVE_SPOTS.map(s=>({lat:s.lat, v:(LIVE.pts[s.live].sst||[])[i]})).filter(p=>p.v!=null).sort((a,b)=>a.lat-b.lat);
+  if (!pts.length) return sstAt(tdate(S.hour)).v;
+  if (lat<=pts[0].lat) return pts[0].v; if (lat>=pts[pts.length-1].lat) return pts[pts.length-1].v;
+  for (let k=1;k<pts.length;k++) if (lat<=pts[k].lat){ const a=pts[k-1], b=pts[k], t=(lat-a.lat)/(b.lat-a.lat); return a.v+(b.v-a.v)*t; }
+  return pts[0].v;
+}
+const sstF = (sp, v) => clamp(1 + sstPts(sp, v)/40, .45, 1.25);
+function sstVerdict(sp, v){
+  const p=sstPts(sp, v), best=SPECIES[sp].sst[0].slice().sort((a,b)=>b[2]-a[2])[0], warm = v>=best[1];
+  return p>=8 ? "ideal water temperature for this species" : p>=3 ? "good water temperature for this species" : p>=0 ? "water temperature is fair"
+    : warm ? (p>-8 ? "water on the warm side, fish go deeper" : "too warm, activity is low") : (p>-8 ? "water on the cool side, fish are slower" : "too cold, activity is low");
+}
 function cellScore(sp, c, si, li, P){
   const S_ = SPECIES[sp], g = HGROUP[c.h], nw = NEAR[sp];
   const shoreF = (1-nw) + nw*Math.exp(-c.ds/220);
   const mouthF = 1 + (si===3 ? .25 : si===2 ? .1 : 0)*Math.exp(-c.dm/1400);
-  return S_.hab[c.h] * S_.stage[g][si] * S_.light[g][li] * (0.5 + 0.5*trap(c.d, S_.depth)) * shoreF * mouthF * P.stage(STAGE_KEYS[si]) * P.light(LIGHTS[li]) * P.zone(c.z);
+  const subF = (SUBPREF[sp]||{})[c.sub] || 1;
+  const tF = P.sst ? sstF(sp, c.lat>45.29 ? P.sst[2] : c.lat>45.25 ? P.sst[1] : P.sst[0]) : 1;
+  return tF * S_.hab[c.h] * S_.stage[g][si] * S_.light[g][li] * (0.5 + 0.5*trap(c.d, S_.depth)) * shoreF * mouthF * subF * structF(sp,c) * P.stage(STAGE_KEYS[si]) * P.light(LIGHTS[li]) * P.zone(c.z);
 }
 function zoneRanking(sp, stage, light){
-  const si=STAGE_KEYS.indexOf(stage), li=LIGHTS.indexOf(light), P=personal(sp);
+  const si=STAGE_KEYS.indexOf(stage), li=LIGHTS.indexOf(light), P=Object.assign({}, personal(sp), {sst:[sstNowAt(45.23), sstNowAt(45.275), sstNowAt(45.31)]});
   const by={}; for (const c of FC.cells){ (by[c.z]=by[c.z]||[]).push(cellScore(sp,c,si,li,P)); }
   return FZ.filter(z=>by[z.id]).map(z=>{ const a=by[z.id].sort((x,y)=>y-x); const top=a.slice(0,Math.max(1,Math.ceil(a.length/2))); return {z, sc: top.reduce((s,v)=>s+v,0)/top.length}; }).sort((a,b)=>b.sc-a.sc);
 }
@@ -1935,10 +1997,10 @@ const HEAT = [[0,[255,232,90,0]],[.18,[255,214,70,.25]],[.35,[255,170,40,.48]],[
 function heatCol(v){ if (v<=HEAT[0][0]) return HEAT[0][1]; for (let i=1;i<HEAT.length;i++) if (v<=HEAT[i][0]){ const a=HEAT[i-1],b=HEAT[i],t=(v-a[0])/(b[0]-a[0]); return a[1].map((x,j)=>x+(b[1][j]-x)*t); } return HEAT[HEAT.length-1][1]; }
 let heatKey="", heatCv=null;
 function heatCanvas(){
-  const sp=S.species, st=currentStage(), li=currentLight(), key=[sp,st,li,PERS_V].join("|");
+  const sp=S.species, st=currentStage(), li=currentLight(), key=[sp,st,li,PERS_V,Math.round(sstNowAt(45.29)*5)].join("|");
   if (key===heatKey && heatCv) return heatCv;
   const w=FC.C1-FC.C0+1, h=FC.R1-FC.R0+1, cv=document.createElement("canvas"); cv.width=w; cv.height=h;
-  const g=cv.getContext("2d"), img=g.createImageData(w,h), P=personal(sp), si=STAGE_KEYS.indexOf(st), lj=LIGHTS.indexOf(li);
+  const g=cv.getContext("2d"), img=g.createImageData(w,h), P=Object.assign({}, personal(sp), {sst:[sstNowAt(45.23), sstNowAt(45.275), sstNowAt(45.31)]}), si=STAGE_KEYS.indexOf(st), lj=LIGHTS.indexOf(li);
   let val=new Float32Array(w*h).fill(NaN);
   for (const c of FC.cells) val[(c.i-FC.R0)*w + (c.k-FC.C0)] = cellScore(sp,c,si,lj,P);
   for (let pass=0; pass<2; pass++){ const nv=new Float32Array(w*h).fill(NaN);
@@ -2138,12 +2200,13 @@ function fishSection(){
     <div class="secthead"><h3>Fish zones · Poreč to Novigrad</h3><label class="tog"><input type="checkbox" id="fishon" ${S.fishOn?"checked":""}> on map</label></div>
     ${speciesChips("fishsp", sp)}
     <p class="fine season">${seasonLine(tdate(S.hour))}</p>
+    ${(()=>{ const v=sstNowAt(S.sel?S.sel.lat:45.3); return `<p class="fine sstline"><b class="k">Sea temp</b> ${v.toFixed(1)} °C · <span style="color:${sstPts(sp,v)>=3?"#1f9d55":sstPts(sp,v)>=0?"var(--muted)":"#c7553d"}">${sstVerdict(sp,v)}</span></p>`; })()}
     <div class="seg stages" role="group" aria-label="Tide stage">${STAGE_KEYS.map(k=>`<button data-stage="${k}" aria-pressed="${stage===k}" style="--st:${STAGES[k].color}">${STAGES[k].short}${auto===k?" •":""}</button>`).join("")}</div>
     ${stageStrip()}
     <div class="seg stages lights" role="group" aria-label="Time of day">${LIGHTS.map(k=>`<button data-light="${k}" aria-pressed="${light===k}" style="--st:#5b6b8c">${LIGHT_LABEL[k]}${autoL===k?" •":""}</button>`).join("")}</div>
     <p class="fine"><b class="k">${STAGES[stage].short} · ${LIGHT_LABEL[light]}</b> ${esc(sd.stageNote[stage])} ${P.n?`<span class="pers">Adjusted with your ${P.n} logged catches.</span>`:""}</p>
     <div class="seg stages areas4" role="group" aria-label="Area">${AREAS.map(([k,l])=>`<button data-farea="${k}" aria-pressed="${area===k}" style="--st:#1f5f99">${l}</button>`).join("")}</div>
-    <ol class="zones">${shown.map(r=>`<li data-zone="${r.z.id}"><div class="zh"><b>${esc(r.z.name)}</b><span class="dots">${DOT_TXT[dots(r.sc)]}</span></div><div class="fine">${r.z.dmin===r.z.dmax?r.z.dmin:r.z.dmin+"–"+r.z.dmax} m · ${esc(habNoteOf(sp, r.z.hab))}${P.counts.zo[r.z.id]?` · <b>${P.counts.zo[r.z.id]} of your catches</b>`:""}</div></li>`).join("")}</ol>
+    <ol class="zones">${shown.map(r=>`<li data-zone="${r.z.id}"><div class="zh"><b>${esc(r.z.name)}</b><span class="dots">${DOT_TXT[dots(r.sc)]}</span></div><div class="fine">${r.z.dmin===r.z.dmax?r.z.dmin:r.z.dmin+"–"+r.z.dmax} m · ${r.z.sub?esc(SUBLABEL[r.z.sub])+(r.z.steep?", steep edge":"")+(r.z.farm?", mussel farm":"")+" · ":""}${esc(habNoteOf(sp, r.z.hab))}${P.counts.zo[r.z.id]?` · <b>${P.counts.zo[r.z.id]} of your catches</b>`:""}</div></li>`).join("")}</ol>
     ${rank.length>6?`<button class="linkbtn" id="allzones">${S.allZones?"Show top 6":`Show all ${rank.length} zones`}</button>`:""}
     ${wins.length?`<div class="secthead"><h3>Best windows · ${sd.name.toLowerCase()}</h3><span class="fine">tide + light</span></div>
     <div class="wins">${wins.map(w=>`<button class="win" data-h="${w.h}"><b>${fDay(w.t)} ${fTime(w.t)}</b><span>${w.label} · ${STAGES[w.st].short}</span></button>`).join("")}</div>`:""}
@@ -2226,6 +2289,7 @@ function openCal(){ openPanel("cal"); }
 function normalizeRec(r){
   const o = Object.assign({}, r);
   if (!o.species) o.species = "bluefish";
+  if (!SPECIES[o.species] && o.species!=="other" && o.species!=="none"){ o.other = o.other || (o.species==="hake" ? "Oslić (hake)" : o.species); o.species = "other"; }
   if (!o.cond) o.cond = {};
   if (o.stage && !o.cond.stage) o.cond.stage = o.stage;
   if (o.lure && !o.lureName) o.lureName = o.lure;
