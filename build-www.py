@@ -16,6 +16,7 @@ DATA = {
 }
 
 s = SRC.read_text()
+s = s.replace('__I18N_JS__', (ROOT / 'src/i18n.js').read_text().replace('__I18N__', (ROOT / 'src/data/i18n.json').read_text().strip()))
 
 def R(a, b, n=1):
     global s
@@ -98,8 +99,8 @@ async function boot(){
   main();
   const note = document.querySelector(".notice");
   const when = new Date(LIVE.fetched);
-  const stamp = when.toLocaleString(undefined, {weekday:"short", hour:"2-digit", minute:"2-digit"});
-  note.innerHTML = (LIVE_SOURCE==="live" ? `Forecast updated ${stamp}` : `Offline · forecast from ${stamp}`) +
+  const stamp = when.toLocaleString(window.LW_I18N ? window.LW_I18N.locale() : undefined, {weekday:"short", hour:"2-digit", minute:"2-digit"});
+  note.innerHTML = (LIVE_SOURCE==="live" ? `Forecast updated <span>${stamp}</span>` : `Offline · forecast from <span>${stamp}</span>`) +
     ` · <button id="refresh" class="refresh">Refresh</button> · not for navigation · map © OpenStreetMap, depth EMODnet, forecast Open-Meteo`;
   document.getElementById("refresh").onclick = () => location.reload();
   let hiddenAt = 0;

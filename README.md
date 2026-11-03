@@ -5,15 +5,18 @@ Marine wind and fishing app for Červar Porat, Poreč, Tarska uvala and Novigrad
 Each time it opens, the app downloads a fresh 7-day forecast from Open-Meteo (wind, gusts, waves, sea level, sea and air temperature, cloud and rain). It keeps the last good download, so it still works offline.
 
 What's inside:
-- **Fish zones from Poreč and Funtana to Červar, Tarska uvala and Novigrad** for 12 species, rated by tide stage and time of day:
-  - Predators: seabass, bluefish, leerfish, dentex, bonito.
+- **Three languages:** English, Slovenščina and Hrvatski, picked from the menu at the top right. The app remembers your choice.
+- **Fish zones from Poreč and Funtana to Červar, Tarska uvala and Novigrad** for 14 species, rated by tide stage and time of day:
+  - Predators: seabass, bluefish, leerfish, dentex, bonito, gof (amberjack), garfish.
   - Bream and bottom fish: orada, fratar, špar, ribon, hake.
   - Squid and cuttlefish.
 - **Chart view**: black water, depth lines every metre, blue shallows and seamarks from OpenStreetMap (lights, cardinal beacons, marinas, reefs, shellfish beds), with a scale in nautical miles.
 - **Seafloor contours** every 2 m, purple shading on steep drop-offs, and a live coordinate readout (degrees and minutes) with depth.
 - **Trolling lines** for Poreč, Červar and Tarska–Novigrad, drawn along the depth contours, with bait, lures, speed and rig for each target fish.
 - **Fish calendar** for each species, with bait, lure, colour and retrieve picks.
-- **Photo catch log.** Photos, size, lure and colour are entered by you. Weather, tide, moon, season and zone are filled in automatically, including weather history for older catches. The log, photos included, stays on the phone.
+- **Full-screen map:** the button under the zoom buttons hides everything else; **Show controls** brings it back.
+- **Named pins:** press and hold on the map (or tap the pin button), name the spot and save. Pins stay on the map with their names; tap one to rename or remove it.
+- **Photo catch log.** Photos of the fish and of the lure, size, lure and colour are entered by you. Weather, tide, moon, season and zone are filled in automatically, including weather history for older catches. The log, photos included, stays on the phone.
 
 There are two ways to get the APK. Option 1 needs no software on your computer.
 
@@ -98,6 +101,7 @@ Android Studio opens the project. Plug in your phone with USB debugging on and p
 ## Changing the app
 
 - **App code and design:** `src/leeway.src.html`, including the fish zones, species, calendar and catch log (search for `FISH MODULE`).
+- **Translations:** `src/i18n/t*.py` hold every English text with its Croatian and Slovenian version. After editing, run `python3 src/i18n/merge.py`. The app is written in English; `src/i18n.js` swaps in the translation for whatever is on screen.
 - **Data files:** `src/data/`.
   - `coast-porec-tar.json`: OpenStreetMap coastline.
   - `depth-tarska.json`: EMODnet depth grid, Poreč to Novigrad.
@@ -107,6 +111,7 @@ Android Studio opens the project. Plug in your phone with USB debugging on and p
 After editing, rebuild the web bundle and copy it into the Android project:
 
 ```
+python3 src/i18n/merge.py
 python3 build-www.py
 npx cap sync
 ```
