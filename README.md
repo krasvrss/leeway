@@ -6,7 +6,7 @@ Each time it opens, the app downloads a fresh 7-day forecast from Open-Meteo (wi
 
 What's inside:
 - **Three languages:** English, Slovenščina and Hrvatski, picked from the menu at the top right. The app remembers your choice.
-- **Fish zones from Poreč and Funtana to Červar, Tarska uvala and Novigrad** for 14 species, rated by tide stage and time of day. Tarska uvala is split into a lettered grid of about 400 m squares (T-A1 to T-J6), like the squares on a chart:
+- **Fish zones from Poreč and Funtana to Červar, Tarska uvala and Novigrad** for 14 species, rated by tide stage and time of day. The whole area is one equal grid of about 400 m squares (columns A–S west to east, rows 1–46 north to south), like the squares on a chart:
   - Predators: seabass, bluefish, leerfish, dentex, bonito, gof (amberjack), garfish.
   - Bream and bottom fish: orada, fratar, špar, ribon, hake.
   - Squid and cuttlefish.

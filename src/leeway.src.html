@@ -1481,20 +1481,18 @@ const FZ = [
   {id:"poff", name:"Open water off Poreč", hab:"deep", r:[13.505,45.18,13.540,45.255]}
 ];
 FZ.forEach(z=>{ if (z.r){ const [w,s,e,n]=z.r; z.c=[[w,s],[e,s],[e,n],[w,n]]; } });
-// Tarska uvala is split into a lettered grid of ~400 m squares (T-A1 … T-J6), like chart squares.
-// Each square keeps the habitat and name of the area it mostly covers.
-const TGRID = {w:13.553, e:13.606, s:45.296, n:45.3185, cols:10, rows:6};
-(function splitTarska(){
-  const ids = ["mouth","flat","seam","petar","kras","central","valeta","entrance","zub","pra"];
-  const src = FZ.filter(z=>ids.includes(z.id));
-  src.forEach(z=>FZ.splice(FZ.indexOf(z),1));
-  const G=TGRID, dx=(G.e-G.w)/G.cols, dy=(G.n-G.s)/G.rows, L="ABCDEFGHIJ";
+// The whole fish area is one equal grid of ~400 m squares, like chart squares: columns A–S west to east,
+// rows 1–46 north to south. Each square keeps the habitat and name of the area it mostly covers.
+const GRID = {w:13.5053, n:45.35225, dx:0.0053, dy:0.00375, cols:19, rows:46, L:"ABCDEFGHIJKLMNOPQRS"};
+const FZ_SRC = FZ.slice();
+(function makeGrid(){
+  const G=GRID; FZ.length=0;
   for (let r=0;r<G.rows;r++) for (let c=0;c<G.cols;c++){
-    const w=G.w+c*dx, e=w+dx, n=G.n-r*dy, s=n-dy, votes={};
-    for (let i=0;i<6;i++) for (let j=0;j<6;j++){ const lon=w+(i+.5)*dx/6, lat=s+(j+.5)*dy/6; if (isLand(lon,lat)) continue; const z=src.find(z=>inPoly(lon,lat,z.c)); if (z) votes[z.id]=(votes[z.id]||0)+1; }
+    const w=G.w+c*G.dx, e=G.w+(c+1)*G.dx, n=G.n-r*G.dy, s=G.n-(r+1)*G.dy, votes={}; // shared edges, no gaps
+    for (let i=0;i<6;i++) for (let j=0;j<6;j++){ const lon=w+(i+.5)*G.dx/6, lat=s+(j+.5)*G.dy/6; if (isLand(lon,lat)) continue; const z=FZ_SRC.find(z=>inPoly(lon,lat,z.c)); if (z) votes[z.id]=(votes[z.id]||0)+1; }
     const best=Object.entries(votes).sort((a,b)=>b[1]-a[1])[0]; if (!best) continue;
-    const p=src.find(z=>z.id===best[0]), code="T-"+L[c]+(r+1);
-    FZ.push({id:"t"+L[c].toLowerCase()+(r+1), name:code+" · "+p.name, label:code, hab:p.hab, parent:p.id, c:[[w,s],[e,s],[e,n],[w,n]]});
+    const p=FZ_SRC.find(z=>z.id===best[0]), code=G.L[c]+(r+1);
+    FZ.push({id:"g"+code.toLowerCase(), name:code+" · "+p.name, label:code, hab:p.hab, parent:p.id, c:[[w,s],[e,s],[e,n],[w,n]]});
   }
 })();
 function inPoly(x,y,c){ let r=false; for (let i=0,j=c.length-1;i<c.length;j=i++){ const [a,b]=c[i],[p,q]=c[j]; if ((b>y)!=(q>y) && x < (p-a)*(y-b)/(q-b)+a) r=!r; } return r; }
@@ -1968,14 +1966,17 @@ function drawFishOverlay(g){
   if (chart && z>5000){ g.save(); g.setLineDash([2,4]); g.lineWidth=1; g.strokeStyle=css("--ink"); g.globalAlpha=.35;
     for (const zz of FZ){ if (!zz.label) continue; g.beginPath(); zz.c.forEach((p,i)=>{ const x=toX(p[0]), y=toY(p[1]); i?g.lineTo(x,y):g.moveTo(x,y); }); g.closePath(); g.stroke(); } g.restore(); }
   g.textAlign="center"; g.lineJoin="round"; const boxes=[];
+  // squares: always label the best few; the rest appear as you zoom in (hot squares first)
+  const topN = new Set(rank.slice(0, z<9000?3:12).map(r=>r.z.id));
   for (const r of rank){
-    if (z<9000 && !top.has(r.z.id)) continue;
-    const [lo,la]=r.z.lp, x=toX(lo), y=toY(la); if (x<20||y<20||x>W-20||y>H-20) continue;
-    g.font=`700 ${z>16000?13:11}px ${css("--f-display")}`; g.lineWidth=3; g.strokeStyle=css("--panel");
-    const nm=(r.z.label||r.z.name).toUpperCase(), tw=g.measureText(nm).width, bx=[x-tw/2-3, y-14, x+tw/2+3, y+16];
+    const d=dots(r.sc);
+    if (!(topN.has(r.z.id) || z>=17000 || (z>=11000 && d>=2))) continue;
+    const [lo,la]=r.z.lp, x=toX(lo), y=toY(la); if (x<12||y<12||x>W-12||y>H-12) continue;
+    g.font=`700 ${z>16000?12:10}px ${css("--f-mono")}`; g.lineWidth=3; g.strokeStyle=css("--panel");
+    const nm=(r.z.label||r.z.name).toUpperCase(), tw=g.measureText(nm).width, bx=[x-tw/2-2, y-12, x+tw/2+2, y+(d?14:2)];
     if (boxes.some(b=>!(bx[2]<b[0]||bx[0]>b[2]||bx[3]<b[1]||bx[1]>b[3]))) continue; boxes.push(bx);
     g.strokeText(nm,x,y-2); g.fillStyle=css("--ink"); g.fillText(nm,x,y-2);
-    g.font=`600 11px ${css("--f-mono")}`; const d=dots(r.sc); g.strokeText(DOT_TXT[d],x,y+12); g.fillStyle = d>=2 ? "#d2401e" : css("--muted"); g.fillText(DOT_TXT[d],x,y+12);
+    if (d){ g.font=`600 10px ${css("--f-mono")}`; g.strokeText(DOT_TXT[d],x,y+10); g.fillStyle = d>=2 ? "#d2401e" : css("--muted"); g.fillText(DOT_TXT[d],x,y+10); }
   }
   g.textAlign="start";
   // logged catches
