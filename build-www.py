@@ -135,7 +135,7 @@ HEAD = '''<!doctype html>
 <meta name="apple-mobile-web-app-title" content="Leeway">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{color-scheme:light}
 body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
 img{max-width:100%}
 [hidden]{display:none!important}

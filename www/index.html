@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-title" content="Leeway">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root{color-scheme:light}
 body{margin:0;font:14px system-ui,-apple-system,"Segoe UI",sans-serif}
 img{max-width:100%}
 [hidden]{display:none!important}
@@ -50,6 +50,7 @@ html{-webkit-tap-highlight-color:transparent}
   --accent:#ff7a3d; --accent-ink:#1a0d06; --particle:rgba(240,250,250,.62); --label:#a9bcbf; --river:#7fc3e0; --iso:#cfe6f2; --iso-ink:#dff0f8;
   --shadow:0 8px 28px rgba(0,0,0,.45); color-scheme:dark}
 html,body{height:100%;margin:0}
+@supports (height:100dvh){ html,body{height:100dvh} }
 [hidden]{display:none!important}
 .phone-only{display:none!important}
 html[data-mode="nav"] [data-modes]:not([data-modes~="nav"]),html[data-mode="fish"] [data-modes]:not([data-modes~="fish"]),html[data-mode="troll"] [data-modes]:not([data-modes~="troll"]){display:none!important}
