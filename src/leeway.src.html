@@ -208,6 +208,22 @@ b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spa
 .fchip[aria-pressed="true"] i{background:#fff}
 .fchip[aria-pressed="true"] b{color:rgba(255,255,255,.85)}
 .fsep{flex:none;width:1px;height:18px;background:var(--line);margin:0 2px}
+.fplist{display:grid;gap:6px}
+.fprow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 10px;color:var(--ink)}
+.fprow i{width:12px;height:12px;border-radius:50%;background:var(--spc);flex:none}
+.fprow[aria-pressed="true"]{border-color:var(--spc);box-shadow:inset 0 0 0 1.5px var(--spc)}
+.fpn{flex:1;display:flex;flex-direction:column;min-width:0}
+.fpn small{font:400 11px var(--f-mono);color:var(--muted)}
+.fps{display:flex;align-items:center;gap:8px}
+.fpseason{font-size:11px;color:var(--muted)}
+.fpscore{font:700 12px var(--f-mono);color:#fff;border-radius:6px;padding:3px 6px;min-width:30px;text-align:center}
+.here{border:1.5px solid var(--spc);border-radius:12px;padding:10px 12px;display:grid;gap:8px;background:color-mix(in srgb,var(--spc) 6%,var(--panel))}
+.here .hh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.here h3{margin:0;font:700 15px var(--f-body);color:var(--spc)}
+.here .tags{display:flex;flex-wrap:wrap;gap:4px}
+.here .tags span{font-size:11px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:2px 8px}
+.here .tip{font-size:12px;margin:0}
+.here .swap{font-size:12px}
 .seasonbars{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;height:74px;margin:4px 0 2px}
 .seasonbars div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:2px}
 .seasonbars i{display:block;width:100%;border-radius:3px 3px 0 0;opacity:.45;min-height:3px}
@@ -219,17 +235,21 @@ b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spa
   .app{grid-template-rows:auto 1fr auto}
   .phone-only{display:revert!important}
   .zoom .phone-only{display:block!important}
-  .brand,.hbtns,.bar .seg,.bar .unitbtn,.seactl{display:none!important}
+  .hbtns,.bar .seg,.bar .unitbtn,.seactl{display:none!important}
+  .brand b{font-size:19px}
+  .brand span{display:none}
   .bar{flex-wrap:nowrap;gap:6px;padding-top:max(6px,env(safe-area-inset-top,0px));padding-bottom:6px;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
   .fishbar{flex:1 1 auto;width:auto;order:0}
   .lang{position:relative;top:auto;right:auto;flex:none;height:32px;padding:0 8px;gap:4px;order:1}
   .lang select{position:absolute;inset:0;opacity:0;width:100%;max-width:none}
   .lcode{display:inline;font:600 12px var(--f-mono);color:var(--ink)}
   .fchip{padding:5px 9px 5px 7px;font-size:12px}
-  .tabbar{display:grid!important;grid-template-columns:repeat(4,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:8;position:relative}
+  .tabbar{display:grid!important;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:8;position:relative}
   .tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px 6px;font-size:11px;font-weight:600;color:var(--muted)}
   .tabbar button[aria-pressed="true"]{color:var(--accent)}
   .tabbar button.lit span::after{content:" •";color:#1f5f99}
+  .tabbar button{position:relative;font-size:10.5px}
+  .fdot{position:absolute;top:6px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--spc,transparent);border:1.5px solid var(--panel)}
   .rail{padding-top:6px;padding-bottom:8px;gap:6px}
   .chip{font-size:12px;padding:3px 8px 3px 7px}
   .play{width:32px;height:32px}
@@ -348,8 +368,7 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
 <div class="app">
   <header class="bar">
     <div class="brand"><b>Leeway</b><span>marine wind · Istria &amp; Adriatic</span></div>
-    <div class="fishbar" id="fishbar" role="group" aria-label="Fish"></div>
-    <div class="hbtns"><button class="calbtn" id="calbtn"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="2.5" width="12" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" stroke-width="1.4"/></svg>Calendar</button><button class="calbtn" id="trollbtn" aria-pressed="false" title="Show or hide trolling lines"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 11c3-1 5-4 6-8M8 3l6 7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="11" r="1.6" fill="currentColor"/></svg>Trolling</button><button class="calbtn" id="logbtn"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 7c3-5 8-5 11 0-3 5-8 5-11 0z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 7l3-3v6z" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg>Catch log</button></div>
+    <div class="hbtns"><button class="calbtn" id="fishbtn"><svg width="20" height="18" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 7c3-5 8-5 11 0-3 5-8 5-11 0z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M12 7l3-3v6z" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg><span class="fbname">Fish</span></button><button class="calbtn" id="calbtn"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="2.5" width="12" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" stroke-width="1.4"/></svg>Calendar</button><button class="calbtn" id="trollbtn" aria-pressed="false" title="Show or hide trolling lines"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 11c3-1 5-4 6-8M8 3l6 7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="14" cy="11" r="1.6" fill="currentColor"/></svg>Trolling</button><button class="calbtn" id="logbtn"><svg width="16" height="14" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 7c3-5 8-5 11 0-3 5-8 5-11 0z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M12 7l3-3v6z" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg>Catch log</button></div>
     <div class="seg" role="group" aria-label="Map layer">
       <button id="ly-wind" aria-pressed="true" data-layer="wind">Wind</button>
       <button id="ly-gust" aria-pressed="false" data-layer="gust">Gusts</button>
@@ -395,9 +414,10 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
   </div>
   <nav class="tabbar phone-only" aria-label="Sections">
     <button data-tab="map" aria-pressed="true"><svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 3.5 5.5 2l5 2 4-1.5v10l-4 1.5-5-2-4 1.5z M5.5 2v10 M10.5 4v10" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg><span>Map</span></button>
+    <button data-tab="fish" aria-pressed="false" id="fishtab"><span class="fdot" id="fishdot"></span><svg width="20" height="18" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 7c3-5 8-5 11 0-3 5-8 5-11 0z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M12 7l3-3v6z" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg><span class="fbname">Fish</span></button>
     <button data-tab="cal" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 14 14" aria-hidden="true"><rect x="1" y="2.5" width="12" height="10.5" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M1 6h12M4.5 1v3M9.5 1v3" stroke="currentColor" stroke-width="1.3"/></svg><span>Calendar</span></button>
     <button data-tab="troll" aria-pressed="false"><svg width="20" height="18" viewBox="0 0 16 14" aria-hidden="true"><path d="M2 11c3-1 5-4 6-8M8 3l6 7" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="14" cy="11" r="1.6" fill="currentColor"/></svg><span>Trolling</span></button>
-    <button data-tab="log" aria-pressed="false"><svg width="20" height="18" viewBox="0 0 16 14" aria-hidden="true"><path d="M1 7c3-5 8-5 11 0-3 5-8 5-11 0z" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M12 7l3-3v6z" fill="currentColor"/><circle cx="9" cy="6" r="1" fill="currentColor"/></svg><span>Catch log</span></button>
+    <button data-tab="log" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2h8l2 2v10H3z M5.5 6h5M5.5 9h5M5.5 12h3" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg><span>Catch log</span></button>
   </nav>
 </div>
 
@@ -1215,6 +1235,7 @@ function select(s){
   S.sel = s; S.panel = "spot"; S.fishArea = null; S.naming=false;
   drawLand(); renderSpots(); renderSheet();
   if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=false;
+  document.getElementById("sheetin").scrollTop=0; syncTabs();
 }
 
 /* ---------- spot sheet ---------- */
@@ -1265,6 +1286,7 @@ function renderSheet(light){
       <button class="closebtn" id="closebtn" aria-label="Close forecast">×</button>
     </div>
     ${S.naming?`<form class="namerow" id="nameform"><input id="spotname" maxlength="32" placeholder="Name this spot" aria-label="Spot name" value="${S.naming==="rename"?esc(s.name||""):""}"><button class="iconbtn on" type="submit">${S.naming==="rename"?"Rename":"Save pin"}</button>${S.naming==="new"?`<span class="fine">Pins stay on the map with their name. Tap ★ again to remove one.</span>`:""}</form>`:""}
+    ${showsFish(s) ? spotPicks(s) : ""}
     ${showsFish(s) ? fishSection() : `<div class="row2"><button class="iconbtn" id="fishlog">Catch log (${S.catches.filter(c=>c.species!=="none").length}) →</button><button class="iconbtn" id="fishcal">Fish calendar →</button></div>`}
     <div class="secthead"><h3>Conditions</h3><span class="fine" id="sel-when">${fDayLong(tdate(S.hour))} ${fTime(tdate(S.hour))}</span></div>
     ${nowHtml}
@@ -2000,7 +2022,7 @@ function drawRoutes(g){
 function syncTroll(){ const b=document.getElementById("trollbtn"); if (b) b.setAttribute("aria-pressed", String(!!S.trollOn)); syncTabs(); }
 function syncTabs(){
   const sh=document.getElementById("sheet"), open = sh && !sh.hidden;
-  const cur = !open ? "map" : S.panel==="cal" ? "cal" : S.panel==="troll" ? "troll" : (S.panel==="log"||S.panel==="entry"||S.panel==="detail") ? "log" : "map";
+  const cur = !open ? "map" : S.panel==="fish" ? "fish" : S.panel==="cal" ? "cal" : S.panel==="troll" ? "troll" : (S.panel==="log"||S.panel==="entry"||S.panel==="detail") ? "log" : "map";
   document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.tab===cur)));
   const t=document.querySelector('[data-tab="troll"]'); if (t) t.classList.toggle("lit", !!S.trollOn);
 }
@@ -2309,18 +2331,64 @@ function wireFish(el){
 function refreshFish(){ const el=document.getElementById("sheetin"), f=el && el.querySelector("#fish"); if (!f) return; f.outerHTML = fishSection(); wireFish(el); }
 let todayCache={};
 function todayOutlook(sp){ const d=new Date(); d.setHours(0,0,0,0); const k=sp+"|"+PERS_V+"|"+d.getTime(); return todayCache[k] || (todayCache[k]=dayOutlook(d, sp)); }
-function renderFishbar(){
-  const el=document.getElementById("fishbar"); if (!el) return; let html="", g0=null;
-  for (const k of SP_KEYS){ const sd=SPECIES[k], o=todayOutlook(k);
-    if (g0 && sd.group!==g0) html+=`<span class="fsep" aria-hidden="true"></span>`; g0=sd.group;
-    html+=`<button class="fchip" data-fsp="${k}" aria-pressed="${S.species===k}" style="--spc:${sd.color}" title="${esc(sd.name)}: ${esc(o.lvl[1])}"><i style="${S.species===k?"":`background:${o.lvl[2]}`}"></i>${esc(sd.name)}<b>${o.sc}</b></button>`; }
-  el.innerHTML=html;
-  el.querySelectorAll("[data-fsp]").forEach(b=>b.onclick=()=>{ if (S.species===b.dataset.fsp && S.panel!=="cal"){ openCal(); return; } setSpecies(b.dataset.fsp); });
-  const on=el.querySelector('[aria-pressed="true"]'); // scroll only the bar, never the page
-  if (on){ const l=on.offsetLeft-el.offsetLeft, r=l+on.offsetWidth; if (l<el.scrollLeft+8) el.scrollLeft=l-30; else if (r>el.scrollLeft+el.clientWidth-8) el.scrollLeft=r-el.clientWidth+30; }
+function renderFishbar(){ // the selected fish shows on the Fish buttons
+  const sd=SPECIES[S.species]; if (!sd) return;
+  document.querySelectorAll(".fbname").forEach(e=>e.textContent=sd.name);
+  const d=document.getElementById("fishdot"); if (d) d.style.setProperty("--spc", sd.color);
 }
-function setSpecies(k){ if (!SPECIES[k]) return; S.species=k; store.set("lw.species",k); heatKey=""; drawLand(); renderFishbar(); if (S.panel==="cal") renderCal(); else if (S.panel==="troll"){ S.trollSp = TROLL[k] ? k : S.trollSp; renderTroll(); } else refreshFish(); }
+function renderFishPanel(){
+  const el=document.getElementById("sheetin"), m=new Date().getMonth();
+  const row = k => { const sd=SPECIES[k], o=todayOutlook(k), mv=sd.months[m];
+    return `<button class="fprow" data-pick="${k}" aria-pressed="${S.species===k}" style="--spc:${sd.color}"><i></i><span class="fpn"><b>${esc(sd.name)}</b><small>${esc(sd.local)}</small></span>
+      <span class="fps"><span class="fpseason">${mv>=.85?"peak season":mv>=.6?"good season":mv>=.35?"fair season":"off season"}</span><span class="fpscore" style="background:${o.lvl[2]}">${o.sc}</span></span></button>`; };
+  el.innerHTML = `
+    <div class="sh-head"><div class="grow"><h2>Choose a fish</h2><div class="coords">Today's score and season · then tap the water for bait and lures there</div></div><button class="iconbtn" id="fpback">← Map</button></div>
+    ${GROUPS.map(([g,l])=>`<div class="secthead"><h3>${esc(l)}</h3></div><div class="fplist">${SP_KEYS.filter(k=>SPECIES[k].group===g).map(row).join("")}</div>`).join("")}`;
+  el.querySelector("#fpback").onclick=()=>{ S.panel="spot"; renderSheet(); if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=true; syncTabs(); };
+  el.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>{ setSpecies(b.dataset.pick); S.fishOn=true; store.set("lw.fishon",true); S.panel="spot"; renderSheet();
+    if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=true;
+    syncTabs(); drawLand(); toast(SPECIES[S.species].name+" · Tap the water for bait and lures there"); });
+}
+function setSpecies(k){ if (!SPECIES[k]) return; S.species=k; store.set("lw.species",k); heatKey=""; drawLand(); renderFishbar(); if (S.panel==="cal") renderCal(); else if (S.panel==="fish") renderFishPanel(); else if (S.panel==="troll"){ S.trollSp = TROLL[k] ? k : S.trollSp; renderTroll(); } else refreshFish(); }
 const showsFish = s => s && (s.id==="tar" || inFB(s.lon, s.lat));
+/* ---------- bait and lures for the exact spot you tapped ---------- */
+function cellNear(lon,lat){
+  const dlo=BD.dlo, dla=BATHY.DLA; let best=null, bd=1e9;
+  const k0=Math.round((lon-BATHY.LO0)/dlo), i0=Math.round((lat-BATHY.LA0)/dla);
+  for (let di=-2;di<=2;di++) for (let dk=-2;dk<=2;dk++){ const r=i0+di-FC.R0, q=k0+dk-FC.C0; if (r<0||q<0||q>=FC.w||r>=FC.h) continue; const j=FC.idx[r*FC.w+q]; if (j<0) continue; const c=FC.cells[j], d=Math.hypot(di,dk); if (d<bd){ bd=d; best=c; } }
+  return best;
+}
+const HAB_LABEL = {mouth:"River mouth", seam:"Plume edge", flat:"Shallow flat", point:"Rocky point", shore:"Shoreline", harbour:"Harbour wall", dropoff:"Drop-off", mid:"Open shelf", deep:"Deep open water"};
+function spotTips(sp, c){
+  const t=[], g=SPECIES[sp].group;
+  if (c.sub==="rock") t.push(g==="ceph" ? "Rocky, snaggy bottom: keep the jig moving and lift it over the rocks." : "Rocky, snaggy bottom: use single hooks or a weedless rig, and keep fish away from the rocks.");
+  if (c.sub==="seagrass") t.push("Probably over seagrass: fish just above the weed tops, not on the bottom.");
+  if (c.sub==="mud"||c.sub==="sandymud") t.push(g==="bream" ? "Soft bottom: a running ledger with worms, mussels or crab works well here." : "Soft, muddy bottom: fish usually hold higher; work the middle of the water.");
+  if (c.h==="dropoff") t.push("On a drop-off: cast or drift across it from shallow to deep and let the lure follow the slope.");
+  if (c.h==="seam"||c.h==="mouth") t.push("Brackish, stained water: brighter colours (chartreuse, gold, pink) show up better here.");
+  if (c.farm<300) t.push("Mussel farm nearby: predators and orada patrol the ropes and floats. Keep clear of the lines.");
+  const d=c.d;
+  if (g!=="pred" || sp==="dentex" || sp==="gof"){ if (d>=15) t.push(`About ${Math.round(d)} m deep: use heavier leads or jigs (60 g and more) to hold the bottom.`); else if (d<3) t.push(`Only about ${Math.max(1,Math.round(d))} m deep: go light and quiet; fish spook easily in shallow water.`); }
+  return t.slice(0,3);
+}
+function spotPicks(s){
+  const sp=S.species, sd=SPECIES[sp], c=cellNear(s.lon, s.lat); if (!c || !sd) return "";
+  const z=zoneById(c.z), stage=currentStage(), light=currentLight(), t=tdate(S.hour);
+  const ctx=Object.assign(windowCtx(t, light), {stage});
+  const L=lurePicks(sp, ctx), P=Object.assign({}, personal(sp), {sst:[sstNowAt(45.23), sstNowAt(45.275), sstNowAt(45.31)]});
+  const sc=cellScore(sp, c, STAGE_KEYS.indexOf(stage), LIGHTS.indexOf(light), P), dd=dots(sc);
+  const better = zoneRanking(sp, stage, light).filter(r=>r.z.id!==c.z && areaOfLat(r.z.lp[1])===areaOfLat(c.lat)).slice(0,2);
+  return `<section class="here" style="--spc:${sd.color}">
+    <div class="hh"><h3>${esc(sd.name)} here</h3><span class="fine">${z?esc(z.label||z.name)+" · ":""}${STAGES[stage].short} · ${LIGHT_LABEL[light]} · <b style="color:${dd>=2?"#d2401e":"inherit"}">${DOT_TXT[dd]}</b></span></div>
+    <div class="tags"><span>${Math.max(0,Math.round(c.d))} m</span><span>${esc(HAB_LABEL[c.h]||c.h)}</span><span>${esc(SUBLABEL[c.sub]||c.sub)}</span>${c.slope>=HABT.drop?`<span>steep edge</span>`:""}${c.farm<300?`<span>mussel farm</span>`:""}</div>
+    <p class="tip">${esc(habNoteOf(sp, c.h))}</p>
+    ${spotTips(sp,c).map(x=>`<p class="tip fine">• ${esc(x)}</p>`).join("")}
+    <ol class="lures">${L.picks.slice(0,2).map(p=>lureCard(Object.assign({}, p, {where: z?(z.label||z.name):p.where}))).join("")}</ol>
+    <div class="fine"><b class="k">Rig</b> ${esc(L.rig)}</div>
+    ${dd<2 && better.length ? `<div class="swap fine"><b class="k">Better now</b> ${better.map(r=>esc(r.z.name)).join(" · ")}</div>` : ""}
+  </section>`;
+}
+
 
 /* ---------- calendar panel ---------- */
 const CAL_DAYS = 35;
@@ -2718,6 +2786,7 @@ function renderPanel(){
   if (S.panel==="entry") return renderEntry();
   if (S.panel==="detail") return renderDetail();
   if (S.panel==="troll") return renderTroll();
+  if (S.panel==="fish") return renderFishPanel();
 }
 
 /* ---------- boot ---------- */
@@ -2750,10 +2819,11 @@ document.getElementById("readout").onclick = async e=>{ const t=e.currentTarget.
 if (window.LW_I18N) window.LW_I18N.onChange(()=>{ heatKey=""; renderAll(); renderDays(); drawLand(); });
 renderAll();
 initLog();
+document.getElementById("fishbtn").onclick = ()=>openPanel("fish");
 document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{
   const t=b.dataset.tab, sh=document.getElementById("sheet");
   if (t==="map"){ sh.hidden = true; if (S.panel!=="spot"){ S.panel="spot"; renderSheet(); } }
-  else if (t==="cal") openCal(); else if (t==="log") openLog(); else if (t==="troll") openTroll();
+  else if (t==="cal") openCal(); else if (t==="log") openLog(); else if (t==="troll") openTroll(); else if (t==="fish") openPanel("fish");
   syncTabs(); });
 new MutationObserver(syncTabs).observe(document.getElementById("sheet"), {attributes:true, attributeFilter:["hidden"]});
 { const nt=document.querySelector(".notice"); if (nt){ nt.title="Map info"; setTimeout(()=>nt.classList.add("mini"), 9000); nt.addEventListener("click", e=>{ if (e.target.closest("button")) return; nt.classList.toggle("mini"); }); } }

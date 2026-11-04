@@ -160,3 +160,25 @@ T += [
 ]
 T += [("Fish","Riba","Ribe"),("By day","Po danima","Po dnevih"),("tap a day for times, bait and lures","dodirnite dan za vremena, mamce i varalice","tapnite dan za čase, vabe in umetne vabe")]
 T += [("Map layers","Slojevi karte","Plasti zemljevida"),("Map","Karta","Zemljevid"),("Sections","Odjeljci","Razdelki")]
+T += [
+("Choose a fish","Odaberite ribu","Izberite ribo"),
+("Today's score and season · then tap the water for bait and lures there","Današnja ocjena i sezona · zatim dodirnite more za mamce i varalice na tom mjestu","Današnja ocena in sezona · nato tapnite morje za vabe na tem mestu"),
+("Tap the water for bait and lures there","Dodirnite more za mamce i varalice na tom mjestu","Tapnite morje za vabe na tem mestu"),
+("here","ovdje","tukaj"),
+("River mouth","Ušće","Ustje"),("Plume edge","Rub riječne vode","Rob rečne vode"),("Shallow flat","Plitka ravnica","Plitva ravnica"),
+("Rocky point","Stjenoviti rt","Skalnat rtič"),("Shoreline","Obala","Obala"),("Harbour wall","Lučki zid","Pristaniški zid"),
+("Drop-off","Padina","Strmina"),("Open shelf","Otvoreni plato","Odprta planota"),("Deep open water","Duboko otvoreno more","Globoko odprto morje"),
+("Better now","Sada bolje","Zdaj bolje"),
+("Rocky, snaggy bottom: keep the jig moving and lift it over the rocks.","Kamenito dno koje zapinje: držite jig u pokretu i podižite ga preko kamenja.","Skalnato dno, kjer se zatika: jig naj bo v gibanju, dvigujte ga čez skale."),
+("Rocky, snaggy bottom: use single hooks or a weedless rig, and keep fish away from the rocks.","Kamenito dno koje zapinje: koristite jednokrake udice ili montažu bez zapinjanja i odvucite ribu od kamenja.","Skalnato dno, kjer se zatika: uporabite enojne trnke ali montažo brez zatikanja in ribo odvlecite od skal."),
+("Probably over seagrass: fish just above the weed tops, not on the bottom.","Vjerojatno iznad morske trave: lovite tik iznad vrhova trave, ne na dnu.","Verjetno nad morsko travo: lovite tik nad vrhovi trave, ne na dnu."),
+("Soft bottom: a running ledger with worms, mussels or crab works well here.","Mekano dno: ovdje dobro radi klizna pridnena montaža s crvima, dagnjama ili rakom.","Mehko dno: tu dobro deluje drsna pridnena montaža s črvi, klapavicami ali rakom."),
+("Soft, muddy bottom: fish usually hold higher; work the middle of the water.","Mekano, muljevito dno: riba se obično drži više; lovite u srednjem sloju.","Mehko, muljasto dno: ribe se običajno držijo višje; lovite v srednjem sloju."),
+("On a drop-off: cast or drift across it from shallow to deep and let the lure follow the slope.","Na padini: bacajte ili driftajte preko nje od plićeg prema dubljem i pustite da varalica prati nagib.","Na strmini: mečite ali driftajte čez njo od plitvega proti globokemu in pustite, da vaba sledi naklonu."),
+("Brackish, stained water: brighter colours (chartreuse, gold, pink) show up better here.","Bočata, zamućena voda: jarke boje (chartreuse, zlatna, ružičasta) ovdje se bolje vide.","Brakična, motna voda: žive barve (chartreuse, zlata, rožnata) se tu bolje vidijo."),
+("Mussel farm nearby: predators and orada patrol the ropes and floats. Keep clear of the lines.","Blizu je uzgajalište dagnji: grabežljivci i orade obilaze konope i plutače. Ne prilazite linijama.","V bližini je gojišče školjk: plenilci in orade patruljirajo ob vrveh in plovcih. Ne približujte se linijam."),
+("About {n} m deep: use heavier leads or jigs (60 g and more) to hold the bottom.","Dubina oko {n} m: koristite teža olova ili jigove (60 g i više) da držite dno.","Globina okoli {n} m: uporabite težje svince ali jige (60 g in več), da držite dno."),
+("Only about {n} m deep: go light and quiet; fish spook easily in shallow water.","Samo oko {n} m dubine: lagano i tiho; riba se u plićaku lako uplaši.","Samo okoli {n} m globine: lahko in tiho; ribe se v plitvini hitro prestrašijo."),
+]
+for _en,_hr,_sl in [("Bluefish","Strijelka","Strijelka"),("Leerfish","Lica","Lica"),("Seabass","Lubin","Brancin"),("Dentex","Zubatac","Zobatec"),("Bonito","Palamida","Palamida"),("Amberjack","Gof","Gof"),("Garfish","Iglica","Iglica"),("Orada","Orada","Orada"),("Fratar","Fratar","Šarg"),("Špar","Špar","Špar"),("Ribon","Ribon","Ribon"),("Squid","Lignja","Ligenj"),("Cuttlefish","Sipa","Sipa")]:
+    T.append((_en+" here", _hr+" ovdje", _sl+" tukaj"))
