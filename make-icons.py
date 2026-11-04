@@ -9,10 +9,10 @@ ORANGE = (255, 122, 61)
 FOAM = (220, 238, 238)
 
 def art(size, transparent_bg):
-    """Top-down cuttlefish whose two long tentacles are hooks curving out left and right,
-    so the whole silhouette reads as an anchor. Cream on deep blue, drawn at 4x then reduced."""
+    """Top-down cuttlefish: short wavy arms, and its two long tentacles turned into wide hooks
+    curving out left and right, so the outline reads as an anchor. Cream on deep blue."""
     S = size * 4
-    u = S / 108.0  # adaptive-icon units; keep the drawing inside the middle ~66
+    u = S / 108.0
     im = Image.new('RGBA', (S, S), (0, 0, 0, 0))
     if not transparent_bg:
         bg = Image.new('RGBA', (S, S)); g = ImageDraw.Draw(bg)
@@ -21,44 +21,49 @@ def art(size, transparent_bg):
             t = y / S; g.line([(0, y), (S, y)], fill=tuple(int(top[i] + (bot[i] - top[i]) * t) for i in range(3)) + (255,))
         im = bg
     d = ImageDraw.Draw(im)
-    C = (246, 238, 220, 255); F = (214, 226, 240, 235); EYE = (12, 34, 70, 255)
+    C = (246, 238, 220, 255); F = (206, 220, 238, 235); EYE = (12, 34, 70, 255); SPOT = (222, 206, 178, 255)
+    k = 0.82  # the design is drawn in a 108-unit box, then scaled to sit inside the icon's safe zone
+    T = lambda x, y: (X(54 + (x - 54) * k), X(54 + (y - 57) * k))
     X = lambda v: v * u
+    W = lambda v: max(1, int(X(v * k)))
+    def ell(x0, y0, x1, y1, fill):
+        p0, p1 = T(x0, y0), T(x1, y1); d.ellipse([p0[0], p0[1], p1[0], p1[1]], fill=fill)
+    def spline(ctrl, n=24):
+        P = [ctrl[0]] + ctrl + [ctrl[-1]]; out = []
+        for i in range(1, len(P) - 2):
+            for j in range(n):
+                t = j / n; p0, p1, p2, p3 = P[i - 1], P[i], P[i + 1], P[i + 2]
+                out.append(tuple(0.5 * (2 * p1[c] + (-p0[c] + p2[c]) * t + (2 * p0[c] - 5 * p1[c] + 4 * p2[c] - p3[c]) * t * t + (-p0[c] + 3 * p1[c] - 3 * p2[c] + p3[c]) * t ** 3) for c in range(2)))
+        out.append(ctrl[-1]); return out
     cx = 54
-    # fin fringe all round the mantle (lighter), then the mantle itself (the anchor's shank)
-    d.ellipse([X(cx - 13.5), X(19), X(cx + 13.5), X(63)], fill=F)
-    d.ellipse([X(cx - 10.5), X(21), X(cx + 10.5), X(61)], fill=C)
-    # subtle cuttlebone stripe and mottling for a little life
-    for k, yy in enumerate(range(27, 57, 5)):
-        d.ellipse([X(cx - 6 + (k % 2)), X(yy), X(cx - 3 + (k % 2)), X(yy + 2)], fill=(222, 206, 178, 255))
-        d.ellipse([X(cx + 3 - (k % 2)), X(yy + 1), X(cx + 6 - (k % 2)), X(yy + 3)], fill=(222, 206, 178, 255))
-    # head with eyes on the sides
-    d.ellipse([X(cx - 9), X(58), X(cx + 9), X(71)], fill=C)
+    # mantle with its fin fringe (the anchor's shank)
+    ell(cx - 14.5, 16.5, cx + 14.5, 61.5, F)
+    ell(cx - 11.5, 19, cx + 11.5, 59, C)
+    for i, yy in enumerate(range(25, 55, 5)):
+        o = i % 2
+        ell(cx - 6.5 + o, yy, cx - 3.5 + o, yy + 2, SPOT); ell(cx + 3.5 - o, yy + 1, cx + 6.5 - o, yy + 3, SPOT)
+    # head and eyes
+    ell(cx - 10, 57, cx + 10, 71, C)
     for sx in (-1, 1):
-        ex = cx + sx * 7.2
-        d.ellipse([X(ex - 2.6), X(61.5), X(ex + 2.6), X(66.5)], fill=C)
-        d.ellipse([X(ex - 1.8), X(62.4), X(ex + 1.8), X(65.6)], fill=EYE)
-    # eight short arms, bunched and tapering forward
+        ex = cx + sx * 8
+        ell(ex - 3, 61, ex + 3, 67, C); ell(ex - 2, 62, ex + 2, 66, EYE)
+    # two wide hooks: down from the head, out along the bottom, up the sides to barbed points
+    th = 4.4
+    for sx in (-1, 1):
+        ctrl = [(cx + sx * 2, 70), (cx + sx * 6, 88), (cx + sx * 16, 95.5), (cx + sx * 28, 95), (cx + sx * 35, 87), (cx + sx * 37, 72), (cx + sx * 36, 54), (cx + sx * 34.5, 47)]
+        r = X(th * k / 2)
+        for x, y in (T(*q) for q in spline(ctrl, 90)):  # stamp discs for a smooth, even stroke
+            d.ellipse([x - r, y - r, x + r, y + r], fill=C)
+        tx, ty = 34.5, 47  # barb points back down and inward, like a fish hook
+        d.polygon([T(cx + sx * (tx + 2.2), ty - 0.5), T(cx + sx * (tx - 6.5), ty + 6.5), T(cx + sx * (tx - 1.5), ty + 7.5)], fill=C)
+    # eight short, wavy arms between the hooks
     for i in range(8):
-        off = (i - 3.5) * 1.35
-        d.polygon([(X(cx + off - 1.3), X(68)), (X(cx + off + 1.3), X(68)), (X(cx + off * 0.45 + 0.35), X(83)), (X(cx + off * 0.45 - 0.35), X(83))], fill=C)
-    # the two long tentacles become hooks: down from the arm base, then curving out and up
-    th = 3.6
-    def hook(sign):
-        # anchor crown: from the bottom centre, curving out to the side and up to a barbed point
-        cy0, r = 71, 17
-        pts = []
-        for j in range(41):
-            phi = math.radians(118 * j / 40)
-            pts.append((X(cx + sign * r * math.sin(phi)), X(cy0 + r * math.cos(phi))))
-        d.line(pts, fill=C, width=int(X(th)), joint='curve')
-        for (x, y) in (pts[0], pts[-1]):
-            d.ellipse([x - X(th / 2), y - X(th / 2), x + X(th / 2), y + X(th / 2)], fill=C)
-        tx, ty = pts[-1]
-        # barb: a small spur pointing back down and inward, like a fish hook
-        d.polygon([(tx - sign * X(1.4), ty - X(0.8)), (tx - sign * X(5.2), ty + X(3.6)), (tx - sign * X(1.0), ty + X(3.0))], fill=C)
-    # short stem from the arm tips down to the crown
-    d.line([(X(cx), X(80)), (X(cx), X(88))], fill=C, width=int(X(th)))
-    hook(-1); hook(1)
+        base = cx + (i - 3.5) * 1.9
+        spread = (i - 3.5) * 1.1
+        n = 80
+        for j in range(n + 1):
+            t = j / n; x, y = T(base + spread * t + 1.3 * math.sin(t * 7 + i), 69 + 18 * t)
+            r = X((1.25 - 0.85 * t) * k); d.ellipse([x - r, y - r, x + r, y + r], fill=C)
     return im.resize((size, size), Image.LANCZOS)
 
 DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
