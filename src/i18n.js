@@ -124,11 +124,13 @@ function setLang(l){
   walk(document.body);
   listeners.forEach(fn=>{ try { fn(l); } catch(e){} });
   const sel = document.getElementById("langsel"); if (sel && sel.value!==l) sel.value = l;
+  const lc = document.getElementById("lcode"); if (lc) lc.textContent = l.toUpperCase();
 }
 function mountPicker(){
   const sel = document.getElementById("langsel"); if (!sel) return;
   sel.innerHTML = LANGS.map(([k,n,s])=>`<option value="${k}">${n}</option>`).join("");
   sel.value = lang;
+  const lc = document.getElementById("lcode"); if (lc) lc.textContent = lang.toUpperCase();
   sel.onchange = () => setLang(sel.value);
 }
 
