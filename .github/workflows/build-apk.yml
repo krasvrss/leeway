@@ -54,6 +54,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk leeway.apk
-          gh release create "v${{ github.run_number }}" leeway.apk \
-            --title "Leeway ${{ github.run_number }}" \
-            --notes "$(git log -1 --pretty=%s)" --latest
+          # GitHub's API sometimes answers 5xx for a moment; try a few times
+          for i in 1 2 3 4 5; do
+            gh release create "v${{ github.run_number }}" leeway.apk \
+              --title "Leeway ${{ github.run_number }}" \
+              --notes "$(git log -1 --pretty=%s)" --latest && exit 0
+            echo "Release failed, retrying in 30 s"; sleep 30
+            gh release delete "v${{ github.run_number }}" --yes --cleanup-tag 2>/dev/null || true
+          done
+          exit 1
