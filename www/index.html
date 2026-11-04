@@ -280,8 +280,8 @@ b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spa
   .lang select{position:absolute;inset:0;opacity:0;width:100%;max-width:none}
   .lcode{display:inline;font:600 12px var(--f-mono);color:var(--ink)}
   .fchip{padding:5px 9px 5px 7px;font-size:12px}
-  .tabbar{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--panel);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:8;position:relative}
-  .tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 2px 6px;font-size:11px;font-weight:600;color:var(--muted)}
+  .tabbar{display:grid!important;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--panel);border-top:1px solid var(--line);padding-bottom:max(2px,calc(env(safe-area-inset-bottom,0px) - 18px));z-index:8;position:relative}
+  .tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px 4px;font-size:11px;font-weight:600;color:var(--muted)}
   .tabbar button[aria-pressed="true"]{color:var(--accent)}
   .tabbar button.lit span::after{content:" •";color:#1f5f99}
   .tabbar button{position:relative;font-size:10.5px}
