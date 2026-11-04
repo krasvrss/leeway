@@ -51,11 +51,13 @@ def art(size, transparent_bg):
     th = 4.4
     for sx in (-1, 1):
         ctrl = [(cx + sx * 2, 70), (cx + sx * 6, 88), (cx + sx * 16, 95.5), (cx + sx * 28, 95), (cx + sx * 35, 87), (cx + sx * 37, 72), (cx + sx * 36, 54), (cx + sx * 34.5, 47)]
-        r = X(th * k / 2)
-        for x, y in (T(*q) for q in spline(ctrl, 90)):  # stamp discs for a smooth, even stroke
+        pts = spline(ctrl, 90)
+        for j, q in enumerate(pts):  # thin where it leaves the head, thickening toward the hook
+            t = j / (len(pts) - 1); x, y = T(*q); r = X((0.55 + 3.0 * t ** 1.4) * k)
             d.ellipse([x - r, y - r, x + r, y + r], fill=C)
-        tx, ty = 34.5, 47  # barb points back down and inward, like a fish hook
-        d.polygon([T(cx + sx * (tx + 2.2), ty - 0.5), T(cx + sx * (tx - 6.5), ty + 6.5), T(cx + sx * (tx - 1.5), ty + 7.5)], fill=C)
+        tx, ty = 34.5, 47  # a bold barb pointing back down and inward, like a fish hook
+        d.polygon([T(cx + sx * (tx + 3.0), ty - 1.5), T(cx + sx * (tx - 9.0), ty + 8.5), T(cx + sx * (tx - 1.0), ty + 9.5)], fill=C)
+        ell(cx + sx * tx - 2.9, ty - 3.4, cx + sx * tx + 2.9, ty + 2.4, C)
     # eight short, wavy arms between the hooks
     for i in range(8):
         base = cx + (i - 3.5) * 1.9
