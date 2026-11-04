@@ -9,52 +9,56 @@ ORANGE = (255, 122, 61)
 FOAM = (220, 238, 238)
 
 def art(size, transparent_bg):
-    """A cuttlefish eye (W-shaped pupil in a golden, mottled iris) on deep blue, drawn at 4x then reduced."""
-    import random
+    """Top-down cuttlefish whose two long tentacles are hooks curving out left and right,
+    so the whole silhouette reads as an anchor. Cream on deep blue, drawn at 4x then reduced."""
     S = size * 4
-    u = S / 108.0  # adaptive-icon units; the safe zone is the middle 66 units
+    u = S / 108.0  # adaptive-icon units; keep the drawing inside the middle ~66
     im = Image.new('RGBA', (S, S), (0, 0, 0, 0))
     if not transparent_bg:
-        bg = Image.new('RGBA', (S, S))
-        top, bot = (24, 118, 210), (10, 52, 120)
+        bg = Image.new('RGBA', (S, S)); g = ImageDraw.Draw(bg)
+        top, bot = (26, 124, 214), (9, 50, 118)
         for y in range(S):
-            t = y / S
-            ImageDraw.Draw(bg).line([(0, y), (S, y)], fill=tuple(int(top[i] + (bot[i] - top[i]) * t) for i in range(3)) + (255,))
+            t = y / S; g.line([(0, y), (S, y)], fill=tuple(int(top[i] + (bot[i] - top[i]) * t) for i in range(3)) + (255,))
         im = bg
     d = ImageDraw.Draw(im)
-    cx, cy = 54 * u, 54 * u
-    # skin around the eye: soft almond shape with a few mottled spots
-    skin = Image.new('L', (S, S), 0); ImageDraw.Draw(skin).ellipse([cx - 31 * u, cy - 21 * u, cx + 31 * u, cy + 21 * u], fill=255)
-    skincol = Image.new('RGBA', (S, S), (214, 160, 92, 255)); im.paste(skincol, (0, 0), skin); d = ImageDraw.Draw(im)
-    rnd = random.Random(7)
-    for _ in range(14):
-        a_ = rnd.uniform(0, 6.283); r = rnd.uniform(18, 29) * u
-        x, y = cx + r * math.cos(a_), cy + r * math.sin(a_) * 0.66
-        rr = rnd.uniform(0.9, 1.8) * u
-        d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(176, 118, 64, 255))
-    # iris: golden with radial streaks
-    R = 19.5 * u
-    d.ellipse([cx - R, cy - R * 0.92, cx + R, cy + R * 0.92], fill=(232, 196, 98, 255))
-    for k in range(40):
-        a_ = k / 40 * 6.283
-        d.line([(cx + 7 * u * math.cos(a_), cy + 7 * u * math.sin(a_) * 0.92), (cx + R * 0.97 * math.cos(a_), cy + R * 0.9 * math.sin(a_))], fill=(196, 150, 60, 255), width=max(1, int(0.9 * u)))
-    d.ellipse([cx - R, cy - R * 0.92, cx + R, cy + R * 0.92], outline=(120, 74, 30, 255), width=int(1.6 * u))
-    # the W-shaped pupil of a cuttlefish: a smooth thick "W" with rounded lobes
-    w, h = 12.5 * u, 6.5 * u
-    ctrl = [(cx - w, cy - h * 0.9), (cx - w * 0.55, cy + h * 0.85), (cx, cy - h * 0.15), (cx + w * 0.55, cy + h * 0.85), (cx + w, cy - h * 0.9)]
-    def cr(p0, p1, p2, p3, t):
-        return tuple(0.5 * ((2 * p1[i]) + (-p0[i] + p2[i]) * t + (2 * p0[i] - 5 * p1[i] + 4 * p2[i] - p3[i]) * t * t + (-p0[i] + 3 * p1[i] - 3 * p2[i] + p3[i]) * t ** 3) for i in range(2))
-    P = [ctrl[0]] + ctrl + [ctrl[-1]]
-    curve = []
-    for k in range(1, len(P) - 2):
-        for j in range(20): curve.append(cr(P[k - 1], P[k], P[k + 1], P[k + 2], j / 20))
-    curve.append(ctrl[-1])
-    th = int(5.2 * u)
-    d.line(curve, fill=(14, 18, 24, 255), width=th, joint='curve')
-    for (x, y) in (curve[0], curve[-1]): d.ellipse([x - th / 2, y - th / 2, x + th / 2, y + th / 2], fill=(14, 18, 24, 255))
-    for (x, y) in (ctrl[1], ctrl[3]): d.ellipse([x - th * 0.75, y - th * 0.7, x + th * 0.75, y + th * 0.55], fill=(14, 18, 24, 255))
-    # highlight
-    d.ellipse([cx + 6 * u, cy - 11 * u, cx + 10 * u, cy - 7.5 * u], fill=(255, 255, 255, 215))
+    C = (246, 238, 220, 255); F = (214, 226, 240, 235); EYE = (12, 34, 70, 255)
+    X = lambda v: v * u
+    cx = 54
+    # fin fringe all round the mantle (lighter), then the mantle itself (the anchor's shank)
+    d.ellipse([X(cx - 13.5), X(19), X(cx + 13.5), X(63)], fill=F)
+    d.ellipse([X(cx - 10.5), X(21), X(cx + 10.5), X(61)], fill=C)
+    # subtle cuttlebone stripe and mottling for a little life
+    for k, yy in enumerate(range(27, 57, 5)):
+        d.ellipse([X(cx - 6 + (k % 2)), X(yy), X(cx - 3 + (k % 2)), X(yy + 2)], fill=(222, 206, 178, 255))
+        d.ellipse([X(cx + 3 - (k % 2)), X(yy + 1), X(cx + 6 - (k % 2)), X(yy + 3)], fill=(222, 206, 178, 255))
+    # head with eyes on the sides
+    d.ellipse([X(cx - 9), X(58), X(cx + 9), X(71)], fill=C)
+    for sx in (-1, 1):
+        ex = cx + sx * 7.2
+        d.ellipse([X(ex - 2.6), X(61.5), X(ex + 2.6), X(66.5)], fill=C)
+        d.ellipse([X(ex - 1.8), X(62.4), X(ex + 1.8), X(65.6)], fill=EYE)
+    # eight short arms, bunched and tapering forward
+    for i in range(8):
+        off = (i - 3.5) * 1.35
+        d.polygon([(X(cx + off - 1.3), X(68)), (X(cx + off + 1.3), X(68)), (X(cx + off * 0.45 + 0.35), X(83)), (X(cx + off * 0.45 - 0.35), X(83))], fill=C)
+    # the two long tentacles become hooks: down from the arm base, then curving out and up
+    th = 3.6
+    def hook(sign):
+        # anchor crown: from the bottom centre, curving out to the side and up to a barbed point
+        cy0, r = 71, 17
+        pts = []
+        for j in range(41):
+            phi = math.radians(118 * j / 40)
+            pts.append((X(cx + sign * r * math.sin(phi)), X(cy0 + r * math.cos(phi))))
+        d.line(pts, fill=C, width=int(X(th)), joint='curve')
+        for (x, y) in (pts[0], pts[-1]):
+            d.ellipse([x - X(th / 2), y - X(th / 2), x + X(th / 2), y + X(th / 2)], fill=C)
+        tx, ty = pts[-1]
+        # barb: a small spur pointing back down and inward, like a fish hook
+        d.polygon([(tx - sign * X(1.4), ty - X(0.8)), (tx - sign * X(5.2), ty + X(3.6)), (tx - sign * X(1.0), ty + X(3.0))], fill=C)
+    # short stem from the arm tips down to the crown
+    d.line([(X(cx), X(80)), (X(cx), X(88))], fill=C, width=int(X(th)))
+    hook(-1); hook(1)
     return im.resize((size, size), Image.LANCZOS)
 
 DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
