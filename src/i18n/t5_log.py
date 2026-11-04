@@ -182,3 +182,21 @@ T += [
 ]
 for _en,_hr,_sl in [("Bluefish","Strijelka","Strijelka"),("Leerfish","Lica","Lica"),("Seabass","Lubin","Brancin"),("Dentex","Zubatac","Zobatec"),("Bonito","Palamida","Palamida"),("Amberjack","Gof","Gof"),("Garfish","Iglica","Iglica"),("Orada","Orada","Orada"),("Fratar","Fratar","Šarg"),("Špar","Špar","Špar"),("Ribon","Ribon","Ribon"),("Squid","Lignja","Ligenj"),("Cuttlefish","Sipa","Sipa")]:
     T.append((_en+" here", _hr+" ovdje", _sl+" tukaj"))
+T += [
+("Mode","Način","Način"),("Navigation","Navigacija","Navigacija"),("Fishing","Ribolov","Ribolov"),("Lines","Linije","Linije"),("Pins","Oznake","Oznake"),
+("Navigation: chart, depths, seamarks and pins","Navigacija: karta, dubine, oznake na moru i vaše oznake","Navigacija: karta, globine, plovne oznake in vaše oznake"),
+("Trolling: lines, speed and lures. Tap a line or the water.","Panula: linije, brzina i varalice. Dodirnite liniju ili more.","Panula: linije, hitrost in vabe. Tapnite linijo ali morje."),
+("Fishing: pick a fish, then tap the water for bait and lures","Ribolov: odaberite ribu, zatim dodirnite more za mamce i varalice","Ribolov: izberite ribo, nato tapnite morje za vabe"),
+("Press and hold on the map to drop a pin","Držite prst na karti da postavite oznaku","Pridržite prst na zemljevidu, da postavite oznako"),
+("＋ Drop a pin at the map centre","＋ Postavi oznaku u središte karte","＋ Postavi oznako v središče zemljevida"),
+("Your pins","Vaše oznake","Vaše oznake"),("No pins yet.","Još nema oznaka.","Oznak še ni."),("Forecast spots","Lokacije s prognozom","Lokacije z napovedjo"),
+("Nearby","U blizini","V bližini"),
+("Depths from EMODnet and seamarks from OpenStreetMap. Not for navigation: check the official chart.","Dubine iz EMODneta, oznake iz OpenStreetMapa. Nije za navigaciju: provjerite službenu kartu.","Globine iz EMODneta, oznake iz OpenStreetMapa. Ni za navigacijo: preverite uradno karto."),
+("Cardinal mark","Kardinalna oznaka","Kardinalna oznaka"),("Lateral mark","Lateralna oznaka","Lateralna oznaka"),("Isolated danger","Usamljena opasnost","Osamljena nevarnost"),("Special mark","Posebna oznaka","Posebna oznaka"),("Light","Svjetlo","Luč"),("Harbour","Luka","Pristanišče"),("Mussel farm","Uzgajalište dagnji","Gojišče školjk"),("Seamark","Oznaka na moru","Plovna oznaka"),
+("Water here is about {n} m: run lures at roughly {n} m, a third of the depth.","Ovdje je oko {n} m dubine: vucite varalice na otprilike {n} m, trećini dubine.","Tu je okoli {n} m globine: vlecite vabe na približno {n} m, tretjini globine."),
+("Water here is about {n} m: run lures at roughly {n} m, a third of the depth, and keep them well off the rocks.","Ovdje je oko {n} m dubine: vucite varalice na otprilike {n} m, trećini dubine, i dobro iznad stijena.","Tu je okoli {n} m globine: vlecite vabe na približno {n} m, tretjini globine, in dobro nad skalami."),
+("Nearest troll line:","Najbliža linija za panulu:","Najbližja linija za panulo:"),
+("All trolling lines →","Sve linije za panulu →","Vse linije za panulo →"),
+]
+for _en,_hr,_sl in [("Bluefish","Strijelka","Strijelka"),("Leerfish","Lica","Lica"),("Seabass","Lubin","Brancin"),("Dentex","Zubatac","Zobatec"),("Bonito","Palamida","Palamida"),("Amberjack","Gof","Gof")]:
+    T.append((_en+" trolling here", "Panula za "+_hr.lower()+" ovdje", "Panula za "+_sl.lower()+" tukaj"))

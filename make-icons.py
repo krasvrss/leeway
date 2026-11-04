@@ -3,34 +3,58 @@ from PIL import Image, ImageDraw, ImageFont
 import pathlib, math
 
 RES = pathlib.Path(__file__).parent / 'android/app/src/main/res'
-BG = (15, 33, 40)
+BG = (12, 58, 128)
 SEA = (40, 120, 130)
 ORANGE = (255, 122, 61)
 FOAM = (220, 238, 238)
 
 def art(size, transparent_bg):
-    """Fish riding three wind streaks, drawn at 4x then reduced for smooth edges."""
+    """A cuttlefish eye (W-shaped pupil in a golden, mottled iris) on deep blue, drawn at 4x then reduced."""
+    import random
     S = size * 4
-    im = Image.new('RGBA', (S, S), (0, 0, 0, 0) if transparent_bg else BG + (255,))
-    d = ImageDraw.Draw(im)
     u = S / 108.0  # adaptive-icon units; the safe zone is the middle 66 units
-    # wind streaks
-    for k, (y, x0, x1) in enumerate([(40, 26, 70), (54, 22, 84), (68, 30, 74)]):
-        pts = []
-        for i in range(41):
-            t = i / 40
-            x = x0 + (x1 - x0) * t
-            pts.append((x * u, (y + 2.2 * math.sin(t * math.pi * 2 + k)) * u))
-        d.line(pts, fill=FOAM + (235,) if k != 1 else SEA + (255,), width=int(3.2 * u), joint='curve')
-    # fish body
-    cx, cy = 58 * u, 54 * u
-    d.ellipse([cx - 17 * u, cy - 8 * u, cx + 15 * u, cy + 8 * u], fill=ORANGE + (255,))
-    # tail
-    d.polygon([(cx - 14 * u, cy), (cx - 26 * u, cy - 9 * u), (cx - 23 * u, cy), (cx - 26 * u, cy + 9 * u)], fill=ORANGE + (255,))
-    # dorsal fin
-    d.polygon([(cx - 4 * u, cy - 7 * u), (cx + 4 * u, cy - 14 * u), (cx + 7 * u, cy - 7 * u)], fill=ORANGE + (255,))
-    # eye
-    d.ellipse([cx + 7 * u, cy - 3 * u, cx + 10.5 * u, cy + 0.5 * u], fill=BG + (255,))
+    im = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    if not transparent_bg:
+        bg = Image.new('RGBA', (S, S))
+        top, bot = (24, 118, 210), (10, 52, 120)
+        for y in range(S):
+            t = y / S
+            ImageDraw.Draw(bg).line([(0, y), (S, y)], fill=tuple(int(top[i] + (bot[i] - top[i]) * t) for i in range(3)) + (255,))
+        im = bg
+    d = ImageDraw.Draw(im)
+    cx, cy = 54 * u, 54 * u
+    # skin around the eye: soft almond shape with a few mottled spots
+    skin = Image.new('L', (S, S), 0); ImageDraw.Draw(skin).ellipse([cx - 31 * u, cy - 21 * u, cx + 31 * u, cy + 21 * u], fill=255)
+    skincol = Image.new('RGBA', (S, S), (214, 160, 92, 255)); im.paste(skincol, (0, 0), skin); d = ImageDraw.Draw(im)
+    rnd = random.Random(7)
+    for _ in range(14):
+        a_ = rnd.uniform(0, 6.283); r = rnd.uniform(18, 29) * u
+        x, y = cx + r * math.cos(a_), cy + r * math.sin(a_) * 0.66
+        rr = rnd.uniform(0.9, 1.8) * u
+        d.ellipse([x - rr, y - rr, x + rr, y + rr], fill=(176, 118, 64, 255))
+    # iris: golden with radial streaks
+    R = 19.5 * u
+    d.ellipse([cx - R, cy - R * 0.92, cx + R, cy + R * 0.92], fill=(232, 196, 98, 255))
+    for k in range(40):
+        a_ = k / 40 * 6.283
+        d.line([(cx + 7 * u * math.cos(a_), cy + 7 * u * math.sin(a_) * 0.92), (cx + R * 0.97 * math.cos(a_), cy + R * 0.9 * math.sin(a_))], fill=(196, 150, 60, 255), width=max(1, int(0.9 * u)))
+    d.ellipse([cx - R, cy - R * 0.92, cx + R, cy + R * 0.92], outline=(120, 74, 30, 255), width=int(1.6 * u))
+    # the W-shaped pupil of a cuttlefish: a smooth thick "W" with rounded lobes
+    w, h = 12.5 * u, 6.5 * u
+    ctrl = [(cx - w, cy - h * 0.9), (cx - w * 0.55, cy + h * 0.85), (cx, cy - h * 0.15), (cx + w * 0.55, cy + h * 0.85), (cx + w, cy - h * 0.9)]
+    def cr(p0, p1, p2, p3, t):
+        return tuple(0.5 * ((2 * p1[i]) + (-p0[i] + p2[i]) * t + (2 * p0[i] - 5 * p1[i] + 4 * p2[i] - p3[i]) * t * t + (-p0[i] + 3 * p1[i] - 3 * p2[i] + p3[i]) * t ** 3) for i in range(2))
+    P = [ctrl[0]] + ctrl + [ctrl[-1]]
+    curve = []
+    for k in range(1, len(P) - 2):
+        for j in range(20): curve.append(cr(P[k - 1], P[k], P[k + 1], P[k + 2], j / 20))
+    curve.append(ctrl[-1])
+    th = int(5.2 * u)
+    d.line(curve, fill=(14, 18, 24, 255), width=th, joint='curve')
+    for (x, y) in (curve[0], curve[-1]): d.ellipse([x - th / 2, y - th / 2, x + th / 2, y + th / 2], fill=(14, 18, 24, 255))
+    for (x, y) in (ctrl[1], ctrl[3]): d.ellipse([x - th * 0.75, y - th * 0.7, x + th * 0.75, y + th * 0.55], fill=(14, 18, 24, 255))
+    # highlight
+    d.ellipse([cx + 6 * u, cy - 11 * u, cx + 10 * u, cy - 7.5 * u], fill=(255, 255, 255, 215))
     return im.resize((size, size), Image.LANCZOS)
 
 DENS = {'mdpi': 1, 'hdpi': 1.5, 'xhdpi': 2, 'xxhdpi': 3, 'xxxhdpi': 4}
@@ -50,7 +74,7 @@ for name, f in DENS.items():
     art(int(108 * f), True).save(folder / 'ic_launcher_foreground.png')
 
 (RES / 'values/ic_launcher_background.xml').write_text(
-    '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#0F2128</color>\n</resources>\n')
+    '<?xml version="1.0" encoding="utf-8"?>\n<resources>\n    <color name="ic_launcher_background">#0C3A80</color>\n</resources>\n')
 # the old vector foreground would shadow the PNGs on some API levels
 v = RES / 'drawable-v24/ic_launcher_foreground.xml'
 if v.exists(): v.unlink()

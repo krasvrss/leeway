@@ -61,6 +61,7 @@ function tr(s, depth){
       if (out.some((x,i)=>x!==parts[i])){ const js = sep.trim() && /[a-z]/.test(sep) ? " "+(D[sep.trim()]||sep.trim())+" " : sep; v = out.join(js); break; }
     }
   }
+  if (v==null && (depth||0) < 3){ const pm = core.match(/^(.*\S) \(([^()]+)\)$/); if (pm){ const b=tr(pm[1],(depth||0)+1), q=tr(pm[2],(depth||0)+1); if (b!==pm[1] || q!==pm[2]) v = b+" ("+q+")"; } }
   if (v==null && window.LW_I18N_MISS) window.LW_I18N_MISS.add(core);
   const res = v==null ? s : m[1]+v+m[3];
   if (cache.size < 5000) cache.set(s, res);
