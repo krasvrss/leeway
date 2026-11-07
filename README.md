@@ -11,6 +11,7 @@ What's inside:
   - Bream and bottom fish: orada, fratar, špar, ribon.
   - Squid and cuttlefish.
 - **Habitat from data, not hand-drawn areas:** every ~110 m spot gets its own habitat from the seabed slope (EMODnet depth), how sheltered it is, the seabed type (EMODnet EUSeaMap 2025: mud, sandy mud, sand, gravel) and nearby mussel farms and buoys (OpenStreetMap). Rock on the steep coastal fringe and seagrass on shallow sheltered soft bottom are inferred, because no survey maps them here. Each species has its own bottom preferences.
+- **Seabed map:** Layers → Seafloor → **Bottom type** colours the sea by what the bottom is made of (rock, seagrass, sand, gravel, sandy mud, mud), with a legend.
 - **Water temperature on the radar:** the live sea temperature from the three forecast points scales each species' map for the hour on the time slider, with a line saying whether the water suits that fish.
 - **Chart view**: black water, depth lines every metre, blue shallows and seamarks from OpenStreetMap (lights, cardinal beacons, marinas, reefs, shellfish beds), with a scale in nautical miles.
 - **Seafloor contours** every 2 m, purple shading on steep drop-offs, and a live coordinate readout (degrees and minutes) with depth.

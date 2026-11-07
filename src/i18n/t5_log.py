@@ -218,3 +218,4 @@ T += [
 ("{n} tracks","{n} ruta","{n} poti"),("{n} min","{n} min","{n} min"),("{n} h {n} min","{n} h {n} min","{n} h {n} min"),
 ]
 T += [("Record track","Snimaj rutu","Snemaj pot"),("Stop recording","Zaustavi snimanje","Ustavi snemanje")]
+T += [("Bottom type","Vrsta dna","Vrsta dna"),("Seabed","Morsko dno","Morsko dno"),("Mud, sand, gravel, rock and seagrass","Mulj, pijesak, šljunak, kamen i morska trava","Mulj, pesek, prod, skale in morska trava"),("EMODnet EUSeaMap · rock and seagrass estimated","EMODnet EUSeaMap · kamen i morska trava su procjena","EMODnet EUSeaMap · skale in morska trava so ocena")]

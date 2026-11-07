@@ -32,6 +32,10 @@ html,body{height:100%;margin:0}
 #recfab[aria-pressed="true"]{background:#d23b2a}
 #recfab[aria-pressed="true"] .recdot{border-radius:3px;background:#fff;box-shadow:none;width:12px;height:12px;animation:recblink 1.2s steps(2) infinite}
 @keyframes recblink{50%{opacity:.35}}
+.sublegend{position:absolute;left:max(12px,env(safe-area-inset-left,0px));bottom:250px;z-index:3;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:grid;gap:3px;font-size:12px;box-shadow:var(--shadow);max-width:200px}
+.sublegend span{display:flex;align-items:center;gap:6px}
+.sublegend i{width:14px;height:10px;border-radius:2px;flex:none}
+.sublegend small{font-size:10px;color:var(--muted)}
 .gpsbar{position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:46px;z-index:4;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 4px 4px 12px;box-shadow:var(--shadow);font:600 12px var(--f-mono);color:var(--ink);max-width:calc(100% - 90px)}
 .gpsbar #gpsinfo{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .recbtn{border:0;border-radius:999px;padding:6px 10px;font:700 12px var(--f-body);background:var(--panel-2);color:#d23b2a;white-space:nowrap}
@@ -297,6 +301,8 @@ b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spa
   .seactl{top:238px;width:auto}
   .seactl button{padding:4px 8px}
   .readout{bottom:104px;font-size:10px;padding:4px 7px}
+  .sublegend{bottom:160px;font-size:11px;padding:6px 8px;grid-template-columns:auto auto;column-gap:10px;max-width:250px}
+  .sublegend b,.sublegend small{grid-column:1/-1}
 }
 .spchips{display:flex;flex-wrap:wrap;gap:6px}
 .spchips button{border:1px solid var(--line);background:var(--panel-2);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;display:inline-flex;align-items:baseline;gap:5px}
@@ -412,15 +418,16 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <div class="notice">● spots use live forecasts · wind map simulated · not for navigation</div>
       <div class="zoom"><button id="locbtn" aria-label="My location" aria-pressed="false" title="My location"><svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><path d="M8 .8v2.4M8 12.8v2.4M.8 8h2.4M12.8 8h2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button id="recfab" aria-label="Record track" aria-pressed="false" title="Record track"><i class="recdot"></i></button><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="laybtn" class="phone-only" aria-label="Map layers" aria-expanded="false" title="Map layers"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 5.5 8 9l6.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m1.5 8.5 6.5 3.5 6.5-3.5M1.5 11.3 8 14.8l6.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
       <button class="fsexit" id="fsexit" type="button">Show controls</button>
+      <div class="sublegend" id="sublegend" hidden></div>
       <div class="gpsbar" id="gpsbar" hidden><span id="gpsinfo"></span><button type="button" id="recbtn" class="recbtn">● Record track</button></div>
       <div class="laymenu" id="laymenu" hidden role="dialog" aria-label="Map layers">
         <div class="lmh">Map layers</div>
         <div class="lmgrid"><button data-layer="wind" aria-pressed="false">Wind</button><button data-layer="gust" aria-pressed="false">Gusts</button><button data-layer="wave" aria-pressed="false">Waves</button><button data-layer="depth" aria-pressed="false">Depth</button><button data-layer="chart" aria-pressed="false">Chart</button></div>
         <div class="lmh">Seafloor</div>
-        <div class="lmgrid two"><button data-sea="iso" aria-pressed="true">Depth lines</button><button data-sea="drop" aria-pressed="true"><i class="dropkey"></i>Drop-offs</button></div>
+        <div class="lmgrid"><button data-sea="iso" aria-pressed="true">Depth lines</button><button data-sea="drop" aria-pressed="true"><i class="dropkey"></i>Drop-offs</button><button data-sea="sub" aria-pressed="false">Bottom type</button></div>
         <div class="lmrow"><span class="lmh">Wind units</span><button class="unitbtn" type="button" aria-label="Wind units: tap to change">kn</button></div>
       </div>
-      <div class="seactl" role="group" aria-label="Seafloor"><button id="isobtn" data-sea="iso" aria-pressed="true" title="A depth line every 2 m">Depth lines</button><button id="dropbtn" data-sea="drop" aria-pressed="true" title="Purple shading marks steep drop-offs"><i class="dropkey"></i>Drop-offs</button></div>
+      <div class="seactl" role="group" aria-label="Seafloor"><button id="isobtn" data-sea="iso" aria-pressed="true" title="A depth line every 2 m">Depth lines</button><button id="dropbtn" data-sea="drop" aria-pressed="true" title="Purple shading marks steep drop-offs"><i class="dropkey"></i>Drop-offs</button><button data-sea="sub" aria-pressed="false" title="Mud, sand, gravel, rock and seagrass">Bottom type</button></div>
       <button class="readout" id="readout" type="button" aria-label="Copy coordinates"></button>
       <div class="legend" id="legend"></div>
       <div class="toast" id="toast" role="status"></div>
@@ -490,7 +497,7 @@ const S = {
   species: store.get("lw.species", "bluefish"), picking:false, catches:[], panel:"spot", calSel:null,
   logFilter:null, detailId:null, draft:null, draftFiles:[],
   isoOn: store.get("lw.iso", true), dropOn: store.get("lw.drop", true),
-  mode: store.get("lw.mode", "fish"), trollOn: store.get("lw.troll", false), trollArea:"north", trollRoute:null, trollSp:"leerfish"
+  mode: store.get("lw.mode", "fish"), subOn: store.get("lw.sub", false), trollOn: store.get("lw.troll", false), trollArea:"north", trollRoute:null, trollSp:"leerfish"
 };
 S.sel = Object.assign({}, S.spots.find(x=>x.id==="tar") || S.spots[0]);
 
@@ -2258,12 +2265,28 @@ function heatCanvas(){
   for (let r=0;r<h;r++) for (let k=0;k<w;k++){ const v=val[r*w+k]; if (isNaN(v)) continue; const col=heatCol(v), o=((h-1-r)*w + k)*4; img.data[o]=col[0]; img.data[o+1]=col[1]; img.data[o+2]=col[2]; img.data[o+3]=Math.round(col[3]*255); }
   g.putImageData(img,0,0); heatKey=key; heatCv=cv; return cv;
 }
+/* ---------- seabed map: what the bottom is like ---------- */
+const SUBCOL = {rock:[120,96,82], seagrass:[52,150,84], sand:[236,208,128], coarse:[196,152,104], sandymud:[160,154,128], mud:[110,100,90]};
+const SUB_ORDER = ["rock","seagrass","sand","coarse","sandymud","mud"];
+let subCv=null;
+function subCanvas(){
+  if (subCv) return subCv;
+  const w=FC.C1-FC.C0+1, h=FC.R1-FC.R0+1, cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+  const g=cv.getContext("2d"), img=g.createImageData(w,h);
+  for (const c of FC.cells){ const col=SUBCOL[c.sub]; if (!col) continue; const o=((h-1-(c.i-FC.R0))*w + (c.k-FC.C0))*4; img.data[o]=col[0]; img.data[o+1]=col[1]; img.data[o+2]=col[2]; img.data[o+3]=250; }
+  g.putImageData(img,0,0); subCv=cv; return cv;
+}
 function drawFishHeat(g){
-  if (!S.fishOn || S.layer==="chart") return;
   const dlo=BD.dlo, dla=BATHY.DLA;
   const x0=toX(BATHY.LO0+(FC.C0-.5)*dlo), x1=toX(BATHY.LO0+(FC.C1+.5)*dlo), y0=toY(BATHY.LA0+(FC.R1+.5)*dla), y1=toY(BATHY.LA0+(FC.R0-.5)*dla);
   if (x1<0||x0>W||y1<0||y0>H) return;
+  if (S.subOn){ g.save(); g.imageSmoothingEnabled = S.view.z<14000; g.globalAlpha=1; g.drawImage(subCanvas(), x0,y0,x1-x0,y1-y0); g.restore(); return; }
+  if (!S.fishOn || S.layer==="chart") return;
   g.save(); g.imageSmoothingEnabled=true; g.imageSmoothingQuality="high"; g.drawImage(heatCanvas(), x0,y0,x1-x0,y1-y0); g.restore();
+}
+function syncSubLegend(){
+  const el=document.getElementById("sublegend"); if (!el) return; el.hidden=!S.subOn;
+  if (S.subOn) el.innerHTML = `<b>Seabed</b>${SUB_ORDER.map(k=>`<span><i style="background:rgb(${SUBCOL[k].join(",")})"></i>${esc(SUBLABEL[k])}</span>`).join("")}<small>EMODnet EUSeaMap · rock and seagrass estimated</small>`;
 }
 function drawFishOverlay(g){
   if (!S.fishOn) return;
@@ -3013,8 +3036,8 @@ document.getElementById("trollbtn").onclick = ()=>{
   if (S.panel==="troll") renderTroll();
 };
 syncTroll();
-const syncSea = () => { document.querySelectorAll('[data-sea="iso"]').forEach(b=>b.setAttribute("aria-pressed", String(S.isoOn))); document.querySelectorAll('[data-sea="drop"]').forEach(b=>b.setAttribute("aria-pressed", String(S.dropOn))); };
-document.querySelectorAll("[data-sea]").forEach(b=>b.onclick = ()=>{ if (b.dataset.sea==="iso"){ S.isoOn=!S.isoOn; store.set("lw.iso",S.isoOn); } else { S.dropOn=!S.dropOn; store.set("lw.drop",S.dropOn); } syncSea(); drawLand(); });
+const syncSea = () => { document.querySelectorAll('[data-sea="iso"]').forEach(b=>b.setAttribute("aria-pressed", String(S.isoOn))); document.querySelectorAll('[data-sea="drop"]').forEach(b=>b.setAttribute("aria-pressed", String(S.dropOn))); document.querySelectorAll('[data-sea="sub"]').forEach(b=>b.setAttribute("aria-pressed", String(!!S.subOn))); syncSubLegend(); };
+document.querySelectorAll("[data-sea]").forEach(b=>b.onclick = ()=>{ if (b.dataset.sea==="sub"){ S.subOn=!S.subOn; store.set("lw.sub",S.subOn); if (S.subOn && S.view.z<5000) zoomTo(13.565,45.27,6000); } else if (b.dataset.sea==="iso"){ S.isoOn=!S.isoOn; store.set("lw.iso",S.isoOn); } else { S.dropOn=!S.dropOn; store.set("lw.drop",S.dropOn); } syncSea(); drawLand(); });
 { const lb=document.getElementById("laybtn"), lm=document.getElementById("laymenu");
   const setOpen = o => { lm.hidden=!o; lb.setAttribute("aria-expanded", String(o)); };
   lb.onclick = e=>{ e.stopPropagation(); setOpen(lm.hidden); };
