@@ -26,6 +26,16 @@
 html,body{height:100%;margin:0}
 @supports (height:100dvh){ html,body{height:100dvh} }
 [hidden]{display:none!important}
+#locbtn[aria-pressed="true"]{color:#1a73e8}
+#locbtn.follow{background:#1a73e8;color:#fff}
+.gpsbar{position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:46px;z-index:4;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 4px 4px 12px;box-shadow:var(--shadow);font:600 12px var(--f-mono);color:var(--ink);max-width:calc(100% - 90px)}
+.gpsbar #gpsinfo{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recbtn{border:0;border-radius:999px;padding:6px 10px;font:700 12px var(--f-body);background:var(--panel-2);color:#d23b2a;white-space:nowrap}
+.recbtn.on{background:#d23b2a;color:#fff}
+.trackrow{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--panel)}
+.trackrow small{display:block;font:400 11px var(--f-mono);color:var(--muted)}
+.trackrow .tb{display:flex;gap:4px}
+.trackrow .tb button{border:1px solid var(--line);background:var(--panel-2);border-radius:7px;padding:4px 7px;font-size:12px;color:var(--ink)}
 .phone-only{display:none!important}
 html[data-mode="nav"] [data-modes]:not([data-modes~="nav"]),html[data-mode="fish"] [data-modes]:not([data-modes~="fish"]),html[data-mode="troll"] [data-modes]:not([data-modes~="troll"]){display:none!important}
 .modesw{display:inline-flex;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:2px;gap:2px}
@@ -83,7 +93,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .app.full .fsexit{display:block}
 #cv-land{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .namerow .fine{grid-column:1/-1}
-.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:168px;z-index:3;display:grid;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
+.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:204px;z-index:3;display:grid;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
 .seactl button{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;font-size:11px;font-weight:600;padding:4px 6px;color:var(--muted)}
 .seactl button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .seactl .fine{font-size:9px;line-height:1.35;font-family:var(--f-mono)}
@@ -280,7 +290,7 @@ b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spa
   .bar .seg{order:3;flex:1;justify-content:space-between}
   .bar .seg button{flex:1;padding:5px 4px}
   .unitbtn{order:4}
-  .seactl{top:166px;width:auto}
+  .seactl{top:202px;width:auto}
   .seactl button{padding:4px 8px}
   .readout{bottom:104px;font-size:10px;padding:4px 7px}
 }
@@ -396,8 +406,9 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <canvas id="cv-parts"></canvas>
       <canvas id="cv-land" aria-label="Wind map of the Adriatic. Tap the water to see the forecast for that point."></canvas>
       <div class="notice">● spots use live forecasts · wind map simulated · not for navigation</div>
-      <div class="zoom"><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="laybtn" class="phone-only" aria-label="Map layers" aria-expanded="false" title="Map layers"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 5.5 8 9l6.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m1.5 8.5 6.5 3.5 6.5-3.5M1.5 11.3 8 14.8l6.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
+      <div class="zoom"><button id="locbtn" aria-label="My location" aria-pressed="false" title="My location"><svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><path d="M8 .8v2.4M8 12.8v2.4M.8 8h2.4M12.8 8h2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="laybtn" class="phone-only" aria-label="Map layers" aria-expanded="false" title="Map layers"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 5.5 8 9l6.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m1.5 8.5 6.5 3.5 6.5-3.5M1.5 11.3 8 14.8l6.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
       <button class="fsexit" id="fsexit" type="button">Show controls</button>
+      <div class="gpsbar" id="gpsbar" hidden><span id="gpsinfo"></span><button type="button" id="recbtn" class="recbtn">● Record track</button></div>
       <div class="laymenu" id="laymenu" hidden role="dialog" aria-label="Map layers">
         <div class="lmh">Map layers</div>
         <div class="lmgrid"><button data-layer="wind" aria-pressed="false">Wind</button><button data-layer="gust" aria-pressed="false">Gusts</button><button data-layer="wave" aria-pressed="false">Waves</button><button data-layer="depth" aria-pressed="false">Depth</button><button data-layer="chart" aria-pressed="false">Chart</button></div>
@@ -1023,6 +1034,122 @@ function drawDepthLabels(g){
   g.textAlign="start";
 }
 const isPin = s => s.live==null && !DEFAULT_SPOTS.some(d=>d.id===s.id);
+
+/* ---------- live position and boat tracks ----------
+   Uses the phone's GPS (browser geolocation). Tracks are saved on the phone only.
+   The screen is kept awake while recording, because phones pause web apps when the screen locks. */
+const GEO = {on:false, follow:false, fix:null, watch:null, rec:null, view:null, wake:null, lastDraw:0};
+const KN = 1.943844;
+function trackDist(pts){ let d=0; for (let i=1;i<pts.length;i++) d+=mDist(pts[i-1][1],pts[i-1][0],pts[i][1],pts[i][0]); return d; }
+const nm = m => (m/1852).toFixed(m<18520?2:1)+" NM";
+const dur = ms => { const m=Math.round(ms/60000); return m<60 ? m+" min" : Math.floor(m/60)+" h "+String(m%60).padStart(2,"0")+" min"; };
+function geoStart(){
+  if (!navigator.geolocation){ toast("This device can't share its location."); return; }
+  GEO.on=true; GEO.follow=true; syncGeo();
+  GEO.watch = navigator.geolocation.watchPosition(onFix, err=>{
+    if (err.code===1) toast("Location is blocked. Allow location for Leeway in the phone's settings."); else if (!GEO.fix) toast("Waiting for a GPS fix…");
+    if (err.code===1) geoStop();
+  }, {enableHighAccuracy:true, maximumAge:2000, timeout:30000});
+  toast("Finding your position…");
+}
+function geoStop(){
+  if (GEO.watch!=null) navigator.geolocation.clearWatch(GEO.watch);
+  GEO.watch=null; GEO.on=false; GEO.follow=false; GEO.fix=null; syncGeo(); drawLand();
+}
+function onFix(p){
+  const c=p.coords, f={lat:c.latitude, lon:c.longitude, acc:c.accuracy, spd:c.speed, hdg:c.heading, t:p.timestamp};
+  const prev=GEO.fix;
+  if ((f.hdg==null || isNaN(f.hdg)) && prev){ const d=mDist(prev.lon,prev.lat,f.lon,f.lat); if (d>4){ f.hdg=(Math.atan2((f.lon-prev.lon)*KX, f.lat-prev.lat)*180/Math.PI+360)%360; if (f.spd==null) f.spd=d/Math.max(1,(f.t-prev.t)/1000); } else f.hdg=prev.hdg; }
+  if (f.spd!=null && f.spd*KN>60) f.spd=null;   // ignore GPS jumps
+  const first=!GEO.fix; GEO.fix=f;
+  if (GEO.rec && f.acc<60){ const R=GEO.rec, last=R.pts[R.pts.length-1];
+    if (!last || mDist(last[1],last[0],f.lon,f.lat)>=8 || f.t-last[2]>=30000){ R.pts.push([+f.lat.toFixed(6), +f.lon.toFixed(6), f.t, f.spd!=null?+(f.spd*KN).toFixed(1):null]); if (R.pts.length%5===0) store.set("lw.trackCur", R); } }
+  if (GEO.follow){ S.view.lon=f.lon; S.view.lat=f.lat; if (first && S.view.z<9000) S.view.z=14000; }
+  syncGeo();
+  const now=Date.now(); if (now-GEO.lastDraw>700 || first){ GEO.lastDraw=now; if (GEO.follow) redrawStatic(); else drawLand(); updateReadout(); }
+}
+function syncGeo(){
+  const b=document.getElementById("locbtn"), bar=document.getElementById("gpsbar");
+  b.setAttribute("aria-pressed", String(GEO.on)); b.classList.toggle("follow", GEO.on && GEO.follow);
+  bar.hidden = !GEO.on;
+  const f=GEO.fix, R=GEO.rec, info=document.getElementById("gpsinfo");
+  const sp = f && f.spd!=null ? (f.spd*KN).toFixed(1)+" kn" : "– kn", hd = f && f.hdg!=null && !isNaN(f.hdg) ? Math.round(f.hdg)+"°" : "–°";
+  info.textContent = !f ? "Finding position…" : R ? `● ${dur(Date.now()-R.start)} · ${nm(trackDist(R.pts))} · ${sp}` : `${sp} · ${hd} · ±${Math.round(f.acc)} m`;
+  const rb=document.getElementById("recbtn"); rb.classList.toggle("on", !!R); rb.textContent = R ? "■ Stop" : "● Record track";
+}
+async function wake(on){
+  try { if (on && navigator.wakeLock && !GEO.wake) GEO.wake = await navigator.wakeLock.request("screen"); else if (!on && GEO.wake){ await GEO.wake.release(); GEO.wake=null; } } catch(e){}
+}
+document.addEventListener("visibilitychange", ()=>{ if (!document.hidden && GEO.rec) wake(true); });
+function recStart(){
+  if (!GEO.on) geoStart();
+  GEO.rec = {id:"t"+Date.now().toString(36), start:Date.now(), pts:[]}; store.set("lw.trackCur", GEO.rec); wake(true); syncGeo();
+  toast("Recording your track. Keep Leeway open: the screen stays on while recording.");
+}
+function recStop(){
+  const R=GEO.rec; if (!R) return; GEO.rec=null; store.set("lw.trackCur", null); wake(false);
+  if (R.pts.length>=2){ const tr=Object.assign(R, {end:Date.now(), dist:Math.round(trackDist(R.pts)), max:Math.max(0,...R.pts.map(p=>p[3]||0))});
+    const all=store.get("lw.tracks",[]); all.unshift(tr); store.set("lw.tracks", all); toast(`Track saved · ${nm(tr.dist)} · ${dur(tr.end-tr.start)}`); }
+  else toast("Track too short to save");
+  syncGeo(); drawLand();
+}
+document.getElementById("locbtn").onclick = ()=>{
+  if (!GEO.on) geoStart();
+  else if (!GEO.follow){ GEO.follow=true; if (GEO.fix){ S.view.lon=GEO.fix.lon; S.view.lat=GEO.fix.lat; redrawStatic(); } syncGeo(); }
+  else if (GEO.rec){ GEO.follow=false; syncGeo(); }
+  else geoStop();
+};
+document.getElementById("recbtn").onclick = ()=> GEO.rec ? recStop() : recStart();
+{ const cur=store.get("lw.trackCur", null); if (cur && cur.pts && cur.pts.length){ GEO.rec=cur; setTimeout(()=>{ geoStart(); wake(true); toast("Continuing the track you were recording"); }, 1500); } }
+function drawTrack(g, pts, col, w){
+  if (!pts || pts.length<2) return; g.save(); g.lineJoin="round"; g.lineCap="round";
+  g.strokeStyle="rgba(0,0,0,.35)"; g.lineWidth=w+2.5; g.beginPath(); pts.forEach((p,i)=>{ const x=toX(p[1]), y=toY(p[0]); i?g.lineTo(x,y):g.moveTo(x,y); }); g.stroke();
+  g.strokeStyle=col; g.lineWidth=w; g.stroke(); g.restore();
+}
+function drawGeo(g){
+  if (GEO.view) drawTrack(g, GEO.view.pts, "#ffb020", 3);
+  if (GEO.rec) drawTrack(g, GEO.rec.pts, "#ff3b30", 3);
+  const f=GEO.fix; if (!f) return;
+  const x=toX(f.lon), y=toY(f.lat), r=Math.max(6, f.acc/((S.view.z?1:1)*metersPerPx()));
+  g.save();
+  if (r>9){ g.fillStyle="rgba(26,115,232,.15)"; g.strokeStyle="rgba(26,115,232,.45)"; g.lineWidth=1; g.beginPath(); g.arc(x,y,Math.min(r,400),0,7); g.fill(); g.stroke(); }
+  if (f.hdg!=null && !isNaN(f.hdg) && (f.spd==null || f.spd>0.4)){ g.translate(x,y); g.rotate(f.hdg*Math.PI/180); g.fillStyle="#1a73e8"; g.strokeStyle="#fff"; g.lineWidth=2;
+    g.beginPath(); g.moveTo(0,-13); g.lineTo(8,9); g.lineTo(0,4); g.lineTo(-8,9); g.closePath(); g.fill(); g.stroke(); }
+  else { g.fillStyle="#1a73e8"; g.strokeStyle="#fff"; g.lineWidth=2.5; g.beginPath(); g.arc(x,y,7,0,7); g.fill(); g.stroke(); }
+  g.restore();
+}
+const metersPerPx = () => mDist(toLon(0), S.view.lat, toLon(100), S.view.lat)/100;
+function gpxOf(tr){
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Leeway" xmlns="http://www.topografix.com/GPX/1/1"><trk><name>Leeway ${new Date(tr.start).toISOString().slice(0,16).replace("T"," ")}</name><trkseg>\n`+
+    tr.pts.map(p=>`<trkpt lat="${p[0]}" lon="${p[1]}"><time>${new Date(p[2]).toISOString()}</time></trkpt>`).join("\n")+`\n</trkseg></trk></gpx>\n`;
+}
+async function shareGpx(tr){
+  const txt=gpxOf(tr), name=`leeway-${new Date(tr.start).toISOString().slice(0,10)}.gpx`;
+  try { const file=new File([txt], name, {type:"application/gpx+xml"}); if (navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({files:[file], title:name}); return; } } catch(e){ if (e && e.name==="AbortError") return; }
+  try { const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([txt],{type:"application/gpx+xml"})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 2000); }
+  catch(e){ try { await navigator.clipboard.writeText(txt); toast("GPX copied"); } catch(_){} }
+}
+function renderTracks(){
+  const el=document.getElementById("sheetin"), all=store.get("lw.tracks",[]);
+  const row = tr => `<div class="trackrow"><div><b>${new Date(tr.start).toLocaleDateString(LOC(),{weekday:"short",day:"numeric",month:"short"})} ${fTime(new Date(tr.start))}</b>
+      <small>${nm(tr.dist)} · ${dur(tr.end-tr.start)} · max ${tr.max||0} kn · avg ${tr.end>tr.start?((tr.dist/1852)/((tr.end-tr.start)/3600e3)).toFixed(1):0} kn</small></div>
+      <div class="tb"><button data-tshow="${tr.id}">Show</button><button data-tgpx="${tr.id}">GPX</button><button data-tdel="${tr.id}" aria-label="Delete track">✕</button></div></div>`;
+  const total=all.reduce((a,t)=>a+t.dist,0);
+  el.innerHTML = `
+    <div class="sh-head"><div class="grow"><h2>Boat tracks</h2><div class="coords">${all.length} tracks · ${nm(total)} in total · saved on this phone</div></div><button class="iconbtn" id="trback">← Map</button></div>
+    <div class="row2"><button class="iconbtn ${GEO.rec?"on":""}" id="trrec">${GEO.rec?"■ Stop recording":"● Record a new track"}</button>${GEO.view?`<button class="iconbtn" id="trhide">Hide track</button>`:""}</div>
+    <p class="fine">Recording keeps the screen on. Phones pause web apps when the screen locks or you switch apps, so keep Leeway open while you record.</p>
+    <div class="fplist">${all.map(row).join("") || `<p class="fine">No tracks yet. Tap ● Record a new track when you leave the harbour.</p>`}</div>`;
+  el.querySelector("#trback").onclick=()=>{ S.panel="spot"; renderSheet(); if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=true; syncTabs(); };
+  el.querySelector("#trrec").onclick=()=>{ GEO.rec ? recStop() : recStart(); renderTracks(); };
+  const th=el.querySelector("#trhide"); if (th) th.onclick=()=>{ GEO.view=null; drawLand(); renderTracks(); };
+  el.querySelectorAll("[data-tshow]").forEach(b=>b.onclick=()=>{ const tr=all.find(t=>t.id===b.dataset.tshow); if (!tr) return; GEO.view=tr;
+    const la=tr.pts.map(p=>p[0]), lo=tr.pts.map(p=>p[1]); GEO.follow=false; syncGeo();
+    zoomTo((Math.min(...lo)+Math.max(...lo))/2, (Math.min(...la)+Math.max(...la))/2, Math.min(20000, Math.max(4000, 0.6*W/((Math.max(...lo)-Math.min(...lo)+0.003)*KX))));
+    if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=true; });
+  el.querySelectorAll("[data-tgpx]").forEach(b=>b.onclick=()=>{ const tr=all.find(t=>t.id===b.dataset.tgpx); if (tr) shareGpx(tr); });
+  el.querySelectorAll("[data-tdel]").forEach(b=>b.onclick=()=>{ if (b.dataset.armed){ store.set("lw.tracks", all.filter(t=>t.id!==b.dataset.tdel)); if (GEO.view && GEO.view.id===b.dataset.tdel) GEO.view=null; drawLand(); renderTracks(); toast("Deleted"); } else { b.dataset.armed="1"; b.textContent="Delete?"; } });
+}
 function drawPin(g,x,y,name,on){
   g.save(); g.translate(x,y);
   g.fillStyle = on ? css("--accent") : "#e0452b"; g.strokeStyle = css("--panel"); g.lineWidth = 1.6;
@@ -1032,6 +1159,7 @@ function drawPin(g,x,y,name,on){
   g.restore();
 }
 function drawMarkers(){
+  try { drawGeo(cvL.getContext("2d")); } catch(e){}
   const g = gL;
   // saved spots
   for (const s of S.spots){
@@ -2385,13 +2513,14 @@ function renderPins(){
   const row = x => { const d=depthAt(x.lon,x.lat); return `<button class="pinrow" data-pin="${esc(x.id)}">${isPin(x)?"📍":"●"}<span style="flex:1"><b translate="no">${esc(x.name)}</b><small>${coordStr(x)}${d!=null?" · "+d+" m":""}</small></span></button>`; };
   el.innerHTML = `
     <div class="sh-head"><div class="grow"><h2>Pins</h2><div class="coords">Press and hold on the map to drop a pin</div></div><button class="iconbtn" id="pinsback">← Map</button></div>
-    <div class="row2"><button class="iconbtn on" id="pinhere">＋ Drop a pin at the map centre</button></div>
+    <div class="row2"><button class="iconbtn on" id="pinhere">＋ Drop a pin at the map centre</button><button class="iconbtn" id="opentracks">Boat tracks →</button></div>
     <div class="secthead"><h3>Your pins</h3><span class="fine">${mine.length}</span></div>
     <div class="fplist">${mine.map(row).join("") || `<p class="fine">No pins yet.</p>`}</div>
     <div class="secthead"><h3>Forecast spots</h3></div>
     <div class="fplist">${live.map(row).join("")}</div>`;
   el.querySelector("#pinsback").onclick=()=>{ S.panel="spot"; renderSheet(); if (matchMedia("(max-width:820px)").matches) document.getElementById("sheet").hidden=true; syncTabs(); };
   el.querySelector("#pinhere").onclick=()=>{ dropPin(W/2,H/2); };
+  el.querySelector("#opentracks").onclick=()=>openPanel("tracks");
   el.querySelectorAll("[data-pin]").forEach(b=>b.onclick=()=>{ const x=S.spots.find(q=>q.id===b.dataset.pin); if (!x) return; select(Object.assign({},x)); zoomTo(x.lon,x.lat,Math.max(S.view.z,12000)); });
 }
 function navCard(s){
@@ -2672,7 +2801,7 @@ function renderLog(){
   const recs = S.catches.filter(r=> f==="all" || r.species===f || (r.species==="none" && f!=="all")).sort((a,b)=>String(b.at).localeCompare(String(a.at)));
   el.innerHTML = `
     <div class="sh-head"><div class="grow"><h2>Catch log</h2><div class="coords">${dbState==="db"?"Saved to your account, private to you":"Saved on this device"}</div></div><button class="iconbtn" id="logback">← Map</button></div>
-    <div class="row2"><button class="iconbtn on" id="addcatch">＋ Add a catch with photos</button><button class="iconbtn" id="addblank">Log a blank session</button></div>
+    <div class="row2"><button class="iconbtn on" id="addcatch">＋ Add a catch with photos</button><button class="iconbtn" id="addblank">Log a blank session</button><button class="iconbtn" id="logtracks">Boat tracks →</button></div>
     ${speciesChips("logsp", f, true)}
     <section class="ins">${insights(recs, f==="all"?"var(--accent)":spColor(f))}</section>
     <div class="secthead"><h3>${recs.length} ${recs.length===1?"entry":"entries"}</h3><span class="fine">tap one to see it in full</span></div>
@@ -2682,6 +2811,7 @@ function renderLog(){
     <p class="fine"><b class="k">Note</b> Croatian rules require licence holders to record their daily catch of seabass, leerfish and bluefish from 1 January 2027. This log keeps that record for you.</p>`;
   el.querySelector("#logback").onclick=()=>{ S.panel="spot"; renderSheet(); };
   el.querySelector("#addcatch").onclick=()=>openEntry();
+  el.querySelector("#logtracks").onclick=()=>openPanel("tracks");
   el.querySelector("#addblank").onclick=()=>openEntry(null,true);
   el.querySelectorAll("#logsp [data-sp]").forEach(b=>b.onclick=()=>{ S.logFilter=b.dataset.sp; renderLog(); });
   el.querySelectorAll(".rec").forEach(li=>li.onclick=()=>{ S.detailId=li.dataset.id; openPanel("detail"); });
@@ -2695,7 +2825,7 @@ function renderLog(){
 function openEntry(rec, blank){
   const base = S.sel && inFB(S.sel.lon,S.sel.lat) ? S.sel : TAR;
   const now = new Date();
-  S.draft = rec ? JSON.parse(JSON.stringify(rec)) : {species: blank?"none":S.species, count: blank?0:1, at: now.toISOString(), lat: base.lat, lon: base.lon, photos:[], lurePhotos:[], cond:{}, kept:false, lureType:"", color:"", retrieve:""};
+  S.draft = rec ? JSON.parse(JSON.stringify(rec)) : {species: blank?"none":S.species, count: blank?0:1, at: now.toISOString(), lat: base.lat, lon: base.lon, photos:[], lurePhotos:[], cond:{}, kept:false, ...(GEO.fix && GEO.fix.acc<100 ? {lat:+GEO.fix.lat.toFixed(5), lon:+GEO.fix.lon.toFixed(5)} : {}), lureType:"", color:"", retrieve:""};
   S.draftFiles = []; S.draftLure = [];
   if (!S.draft.lurePhotos) S.draft.lurePhotos = [];
   openPanel("entry");
@@ -2856,6 +2986,7 @@ function renderPanel(){
   if (S.panel==="troll") return renderTroll();
   if (S.panel==="fish") return renderFishPanel();
   if (S.panel==="pins") return renderPins();
+  if (S.panel==="tracks") return renderTracks();
 }
 
 /* ---------- boot ---------- */

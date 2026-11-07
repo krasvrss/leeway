@@ -16,6 +16,7 @@ What's inside:
 - **Seafloor contours** every 2 m, purple shading on steep drop-offs, and a live coordinate readout (degrees and minutes) with depth.
 - **Trolling lines** for Poreč, Červar and Tarska–Novigrad, drawn along the depth contours, with bait, lures, speed and rig for each target fish.
 - **Fish calendar** for each species, with bait, lure, colour and retrieve picks.
+- **Live position and boat tracks:** the target button on the map shows where you are (with speed and heading) and follows you. **● Record track** logs your route; tracks are listed under Catch log → Boat tracks (or Navigation → Pins), with distance, time and speed, and can be shown on the map or exported as GPX. The screen stays on while recording, because phones pause web apps when the screen locks.
 - **Full-screen map:** the button under the zoom buttons hides everything else; **Show controls** brings it back.
 - **Named pins:** press and hold on the map (or tap the pin button), name the spot and save. Pins stay on the map with their names; tap one to rename or remove it.
 - **Photo catch log.** Photos of the fish and of the lure, size, lure and colour are entered by you. Weather, tide, moon, season and zone are filled in automatically, including weather history for older catches. The log, photos included, stays on the phone.

@@ -200,3 +200,20 @@ T += [
 ]
 for _en,_hr,_sl in [("Bluefish","Strijelka","Strijelka"),("Leerfish","Lica","Lica"),("Seabass","Lubin","Brancin"),("Dentex","Zubatac","Zobatec"),("Bonito","Palamida","Palamida"),("Amberjack","Gof","Gof")]:
     T.append((_en+" trolling here", "Panula za "+_hr.lower()+" ovdje", "Panula za "+_sl.lower()+" tukaj"))
+T += [
+("My location","Moja lokacija","Moja lokacija"),
+("● Record track","● Snimaj rutu","● Snemaj pot"),("■ Stop","■ Zaustavi","■ Ustavi"),
+("This device can't share its location.","Ovaj uređaj ne može dijeliti lokaciju.","Ta naprava ne more deliti lokacije."),
+("Location is blocked. Allow location for Leeway in the phone's settings.","Lokacija je blokirana. Dopustite lokaciju za Leeway u postavkama telefona.","Lokacija je blokirana. Dovolite lokacijo za Leeway v nastavitvah telefona."),
+("Waiting for a GPS fix…","Čekam GPS signal…","Čakam na GPS signal…"),("Finding your position…","Tražim vaš položaj…","Iščem vaš položaj…"),("Finding position…","Tražim položaj…","Iščem položaj…"),
+("Recording your track. Keep Leeway open: the screen stays on while recording.","Snimam vašu rutu. Držite Leeway otvorenim: zaslon ostaje upaljen tijekom snimanja.","Snemam vašo pot. Leeway naj ostane odprt: zaslon med snemanjem ostane prižgan."),
+("Track saved","Ruta spremljena","Pot shranjena"),("Track too short to save","Ruta je prekratka za spremanje","Pot je prekratka za shranjevanje"),
+("Continuing the track you were recording","Nastavljam rutu koju ste snimali","Nadaljujem pot, ki ste jo snemali"),
+("Boat tracks","Rute broda","Poti čolna"),("Boat tracks →","Rute broda →","Poti čolna →"),
+("● Record a new track","● Snimaj novu rutu","● Snemaj novo pot"),("■ Stop recording","■ Zaustavi snimanje","■ Ustavi snemanje"),("Hide track","Sakrij rutu","Skrij pot"),
+("Recording keeps the screen on. Phones pause web apps when the screen locks or you switch apps, so keep Leeway open while you record.","Snimanje drži zaslon upaljenim. Telefoni pauziraju web aplikacije kad se zaslon zaključa ili prijeđete u drugu aplikaciju, pa držite Leeway otvorenim dok snimate.","Snemanje ohranja zaslon prižgan. Telefoni ustavijo spletne aplikacije, ko se zaslon zaklene ali preklopite v drugo aplikacijo, zato naj bo Leeway med snemanjem odprt."),
+("No tracks yet. Tap ● Record a new track when you leave the harbour.","Još nema ruta. Dodirnite ● Snimaj novu rutu kad isplovite iz luke.","Poti še ni. Ko izplujete iz pristanišča, tapnite ● Snemaj novo pot."),
+("Show","Prikaži","Pokaži"),("Delete track","Obriši rutu","Izbriši pot"),("Delete?","Obrisati?","Izbrisati?"),("GPX copied","GPX kopiran","GPX kopiran"),
+("tracks","ruta","poti"),("in total","ukupno","skupaj"),("saved on this phone","spremljeno na ovom telefonu","shranjeno na tem telefonu"),("max","najviše","največ"),("avg","prosjek","povprečje"),
+("{n} tracks","{n} ruta","{n} poti"),("{n} min","{n} min","{n} min"),("{n} h {n} min","{n} h {n} min","{n} h {n} min"),
+]
