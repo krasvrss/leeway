@@ -28,6 +28,10 @@ html,body{height:100%;margin:0}
 [hidden]{display:none!important}
 #locbtn[aria-pressed="true"]{color:#1a73e8}
 #locbtn.follow{background:#1a73e8;color:#fff}
+.recdot{display:block;width:14px;height:14px;margin:auto;border-radius:50%;background:#d23b2a;box-shadow:0 0 0 2px var(--panel),0 0 0 3.5px #d23b2a}
+#recfab[aria-pressed="true"]{background:#d23b2a}
+#recfab[aria-pressed="true"] .recdot{border-radius:3px;background:#fff;box-shadow:none;width:12px;height:12px;animation:recblink 1.2s steps(2) infinite}
+@keyframes recblink{50%{opacity:.35}}
 .gpsbar{position:absolute;left:max(12px,env(safe-area-inset-left,0px));top:46px;z-index:4;display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 4px 4px 12px;box-shadow:var(--shadow);font:600 12px var(--f-mono);color:var(--ink);max-width:calc(100% - 90px)}
 .gpsbar #gpsinfo{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .recbtn{border:0;border-radius:999px;padding:6px 10px;font:700 12px var(--f-body);background:var(--panel-2);color:#d23b2a;white-space:nowrap}
@@ -93,7 +97,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .app.full .fsexit{display:block}
 #cv-land{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 .namerow .fine{grid-column:1/-1}
-.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:204px;z-index:3;display:grid;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
+.seactl{position:absolute;right:max(12px,env(safe-area-inset-right,0px));top:240px;z-index:3;display:grid;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px;box-shadow:var(--shadow);width:104px}
 .seactl button{border:1px solid var(--line);background:var(--panel-2);border-radius:6px;font-size:11px;font-weight:600;padding:4px 6px;color:var(--muted)}
 .seactl button[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
 .seactl .fine{font-size:9px;line-height:1.35;font-family:var(--f-mono)}
@@ -290,7 +294,7 @@ b.k{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spa
   .bar .seg{order:3;flex:1;justify-content:space-between}
   .bar .seg button{flex:1;padding:5px 4px}
   .unitbtn{order:4}
-  .seactl{top:202px;width:auto}
+  .seactl{top:238px;width:auto}
   .seactl button{padding:4px 8px}
   .readout{bottom:104px;font-size:10px;padding:4px 7px}
 }
@@ -406,7 +410,7 @@ ul.recs{margin:0;padding:0;list-style:none;display:grid;gap:6px}
       <canvas id="cv-parts"></canvas>
       <canvas id="cv-land" aria-label="Wind map of the Adriatic. Tap the water to see the forecast for that point."></canvas>
       <div class="notice">● spots use live forecasts · wind map simulated · not for navigation</div>
-      <div class="zoom"><button id="locbtn" aria-label="My location" aria-pressed="false" title="My location"><svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><path d="M8 .8v2.4M8 12.8v2.4M.8 8h2.4M12.8 8h2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="laybtn" class="phone-only" aria-label="Map layers" aria-expanded="false" title="Map layers"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 5.5 8 9l6.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m1.5 8.5 6.5 3.5 6.5-3.5M1.5 11.3 8 14.8l6.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
+      <div class="zoom"><button id="locbtn" aria-label="My location" aria-pressed="false" title="My location"><svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="4.2" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="8" r="1.7" fill="currentColor"/><path d="M8 .8v2.4M8 12.8v2.4M.8 8h2.4M12.8 8h2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button><button id="recfab" aria-label="Record track" aria-pressed="false" title="Record track"><i class="recdot"></i></button><button id="zin" aria-label="Zoom in">+</button><button id="zout" aria-label="Zoom out">−</button><button id="laybtn" class="phone-only" aria-label="Map layers" aria-expanded="false" title="Map layers"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2 1.5 5.5 8 9l6.5-3.5z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="m1.5 8.5 6.5 3.5 6.5-3.5M1.5 11.3 8 14.8l6.5-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button><button id="fsbtn" aria-label="Full-screen map" aria-pressed="false" title="Full-screen map"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-open"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" class="ico-close"><path d="M6 2v4H2M14 6h-4V2M10 14v-4h4M2 10h4v4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="pinbtn" aria-label="Drop a pin at the map centre" title="Drop a pin (or press and hold on the map)"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 15s5-5.2 5-8.6A5 5 0 0 0 3 6.4C3 9.8 8 15 8 15z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="8" cy="6.4" r="1.8" fill="currentColor"/></svg></button></div>
       <button class="fsexit" id="fsexit" type="button">Show controls</button>
       <div class="gpsbar" id="gpsbar" hidden><span id="gpsinfo"></span><button type="button" id="recbtn" class="recbtn">● Record track</button></div>
       <div class="laymenu" id="laymenu" hidden role="dialog" aria-label="Map layers">
@@ -1076,6 +1080,7 @@ function syncGeo(){
   const sp = f && f.spd!=null ? (f.spd*KN).toFixed(1)+" kn" : "– kn", hd = f && f.hdg!=null && !isNaN(f.hdg) ? Math.round(f.hdg)+"°" : "–°";
   info.textContent = !f ? "Finding position…" : R ? `● ${dur(Date.now()-R.start)} · ${nm(trackDist(R.pts))} · ${sp}` : `${sp} · ${hd} · ±${Math.round(f.acc)} m`;
   const rb=document.getElementById("recbtn"); rb.classList.toggle("on", !!R); rb.textContent = R ? "■ Stop" : "● Record track";
+  const rf=document.getElementById("recfab"); rf.setAttribute("aria-pressed", String(!!R)); rf.title = R ? "Stop recording" : "Record track";
 }
 async function wake(on){
   try { if (on && navigator.wakeLock && !GEO.wake) GEO.wake = await navigator.wakeLock.request("screen"); else if (!on && GEO.wake){ await GEO.wake.release(); GEO.wake=null; } } catch(e){}
@@ -1100,6 +1105,7 @@ document.getElementById("locbtn").onclick = ()=>{
   else geoStop();
 };
 document.getElementById("recbtn").onclick = ()=> GEO.rec ? recStop() : recStart();
+document.getElementById("recfab").onclick = ()=> GEO.rec ? recStop() : recStart();
 { const cur=store.get("lw.trackCur", null); if (cur && cur.pts && cur.pts.length){ GEO.rec=cur; setTimeout(()=>{ geoStart(); wake(true); toast("Continuing the track you were recording"); }, 1500); } }
 function drawTrack(g, pts, col, w){
   if (!pts || pts.length<2) return; g.save(); g.lineJoin="round"; g.lineCap="round";

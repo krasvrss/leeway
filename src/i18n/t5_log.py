@@ -217,3 +217,4 @@ T += [
 ("tracks","ruta","poti"),("in total","ukupno","skupaj"),("saved on this phone","spremljeno na ovom telefonu","shranjeno na tem telefonu"),("max","najviše","največ"),("avg","prosjek","povprečje"),
 ("{n} tracks","{n} ruta","{n} poti"),("{n} min","{n} min","{n} min"),("{n} h {n} min","{n} h {n} min","{n} h {n} min"),
 ]
+T += [("Record track","Snimaj rutu","Snemaj pot"),("Stop recording","Zaustavi snimanje","Ustavi snemanje")]
